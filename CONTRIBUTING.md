@@ -29,7 +29,7 @@ PointerFlags pointerFlags = PointerFlags.NONE;
 Vector2 point = rpis[i].Translate( ScreenUtils.GetNamedBounds( Settings.ScreenDevice ));
 ```
 
-## Member Variable & Property Naming
+## Member Variable & Property
 Member variables should use `camelCase`. If the variable is `protected` or `private` it should be prefixed with an underscore (`_`)
 ```cs
 private int _pointerId;
@@ -37,6 +37,17 @@ private string _screenDevice;
 ```
 
 Member properties should use `PascalCase`. Do not use `protected` or `private` properties.
+
+Members should be accessed with `this.` for clarity
+```cs
+private void DrawPoints( Graphics g )
+{
+    using var brush = new SolidBrush( this.NodeColor );
+    DrawPoint( g, PointToScreenCoords( this._data.Threshold ), brush );
+    DrawPoint( g, PointToScreenCoords( this._data.Softness ), brush );
+    DrawPoint( g, PointToScreenCoords( this._data.Cap ), brush );
+}
+```
 
 ## Constants
 Use `UPPER_SNAKE_CASE` for constants.
