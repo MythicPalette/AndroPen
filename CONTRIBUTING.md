@@ -6,12 +6,14 @@ Everyone is welcome to submit pull requests. Please try to adhere to the code st
 
 # Code Standards
 ## Indentation & Spacing
-Use ***4*** spaces for indentation.
-Add extra spaces between control statements, parentheses, and curly braces
+* Use ***4*** spaces for indentation.
+* Add extra spaces between control statements, parentheses, and curly braces.
+* Do not add spaces in parenthesis for casting.
 ```cs
-if ( condition )
+for( int i = 0; i <= segments; i++ )
 {
-    // Code here
+    float t = i / (float)segments;
+    curvePoints[i] = QuadraticBezierInterpolation( p1, p2, p3, t );
 }
 ```
 
