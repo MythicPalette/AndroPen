@@ -68,8 +68,6 @@
             this.pressureCuve1.BackColor = Color.FromArgb( 64, 64, 64 );
             this.pressureCuve1.CurveColor = Color.FromArgb( 224, 224, 224 );
             this.pressureCuve1.GridColor = Color.DimGray;
-            this.pressureCuve1.LabelX = null;
-            this.pressureCuve1.LabelY = null;
             this.pressureCuve1.Location = new Point( 380, 41 );
             this.pressureCuve1.Name = "pressureCuve1";
             this.pressureCuve1.NodeColor = Color.FromArgb( 255, 128, 128 );

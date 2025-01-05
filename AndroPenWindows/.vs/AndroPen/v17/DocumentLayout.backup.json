@@ -1,22 +1,18 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "Z:\\Projects\\Coding\\CS\\AndroidPen\\",
+  "WorkspaceRootPath": "Z:\\Projects\\Coding\\Android\\AndroPen\\AndroPenWindows\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{C8AB14CC-DDE9-4847-9B42-14ED604C42DE}|AndroPen.csproj|z:\\projects\\coding\\cs\\androidpen\\data\\remotepointerinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C8AB14CC-DDE9-4847-9B42-14ED604C42DE}|AndroPen.csproj|solutionrelative:data\\remotepointerinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{C8AB14CC-DDE9-4847-9B42-14ED604C42DE}|AndroPen.csproj|z:\\projects\\coding\\android\\andropen\\andropenwindows\\helpers\\win32.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C8AB14CC-DDE9-4847-9B42-14ED604C42DE}|AndroPen.csproj|solutionrelative:helpers\\win32.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C8AB14CC-DDE9-4847-9B42-14ED604C42DE}|AndroPen.csproj|z:\\projects\\coding\\cs\\androidpen\\helpers\\client.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C8AB14CC-DDE9-4847-9B42-14ED604C42DE}|AndroPen.csproj|solutionrelative:helpers\\client.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{C8AB14CC-DDE9-4847-9B42-14ED604C42DE}|AndroPen.csproj|z:\\projects\\coding\\android\\andropen\\andropenwindows\\data\\winstructs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C8AB14CC-DDE9-4847-9B42-14ED604C42DE}|AndroPen.csproj|solutionrelative:data\\winstructs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C8AB14CC-DDE9-4847-9B42-14ED604C42DE}|AndroPen.csproj|z:\\projects\\coding\\cs\\androidpen\\helpers\\inputhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C8AB14CC-DDE9-4847-9B42-14ED604C42DE}|AndroPen.csproj|solutionrelative:helpers\\inputhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C8AB14CC-DDE9-4847-9B42-14ED604C42DE}|AndroPen.csproj|z:\\projects\\coding\\cs\\androidpen\\controls\\pressurecurve.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C8AB14CC-DDE9-4847-9B42-14ED604C42DE}|AndroPen.csproj|solutionrelative:controls\\pressurecurve.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{C8AB14CC-DDE9-4847-9B42-14ED604C42DE}|AndroPen.csproj|z:\\projects\\coding\\android\\andropen\\andropenwindows\\helpers\\screenutils.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C8AB14CC-DDE9-4847-9B42-14ED604C42DE}|AndroPen.csproj|solutionrelative:helpers\\screenutils.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,58 +22,45 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "RemotePointerInfo.cs",
-              "DocumentMoniker": "Z:\\Projects\\Coding\\CS\\AndroidPen\\Data\\RemotePointerInfo.cs",
-              "RelativeDocumentMoniker": "Data\\RemotePointerInfo.cs",
-              "ToolTip": "Z:\\Projects\\Coding\\CS\\AndroidPen\\Data\\RemotePointerInfo.cs",
-              "RelativeToolTip": "Data\\RemotePointerInfo.cs",
-              "ViewState": "AgIAABYAAAAAAAAAAAAewBoAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-05T18:07:08.15Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "Client.cs",
-              "DocumentMoniker": "Z:\\Projects\\Coding\\CS\\AndroidPen\\Helpers\\Client.cs",
-              "RelativeDocumentMoniker": "Helpers\\Client.cs",
-              "ToolTip": "Z:\\Projects\\Coding\\CS\\AndroidPen\\Helpers\\Client.cs",
-              "RelativeToolTip": "Helpers\\Client.cs",
-              "ViewState": "AgIAABYAAAAAAAAIK7QswC0AAAAvAAAAAAAAAA==",
+              "Title": "WinStructs.cs",
+              "DocumentMoniker": "Z:\\Projects\\Coding\\Android\\AndroPen\\AndroPenWindows\\Data\\WinStructs.cs",
+              "RelativeDocumentMoniker": "Data\\WinStructs.cs",
+              "ToolTip": "Z:\\Projects\\Coding\\Android\\AndroPen\\AndroPenWindows\\Data\\WinStructs.cs",
+              "RelativeToolTip": "Data\\WinStructs.cs",
+              "ViewState": "AgIAALYAAAAAAAAAAAAowMEAAAAcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-05T18:05:18.552Z",
+              "WhenOpened": "2025-01-05T23:05:57.49Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "PressureCurve.cs",
-              "DocumentMoniker": "Z:\\Projects\\Coding\\CS\\AndroidPen\\Controls\\PressureCurve.cs",
-              "RelativeDocumentMoniker": "Controls\\PressureCurve.cs",
-              "ToolTip": "Z:\\Projects\\Coding\\CS\\AndroidPen\\Controls\\PressureCurve.cs",
-              "RelativeToolTip": "Controls\\PressureCurve.cs",
-              "ViewState": "AgIAAKAAAAAAAAAAAAAQwKgAAAAzAAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "Win32.cs",
+              "DocumentMoniker": "Z:\\Projects\\Coding\\Android\\AndroPen\\AndroPenWindows\\Helpers\\Win32.cs",
+              "RelativeDocumentMoniker": "Helpers\\Win32.cs",
+              "ToolTip": "Z:\\Projects\\Coding\\Android\\AndroPen\\AndroPenWindows\\Helpers\\Win32.cs",
+              "RelativeToolTip": "Helpers\\Win32.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-05T17:26:14.677Z",
+              "WhenOpened": "2025-01-05T23:01:38.562Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "InputHandler.cs",
-              "DocumentMoniker": "Z:\\Projects\\Coding\\CS\\AndroidPen\\Helpers\\InputHandler.cs",
-              "RelativeDocumentMoniker": "Helpers\\InputHandler.cs",
-              "ToolTip": "Z:\\Projects\\Coding\\CS\\AndroidPen\\Helpers\\InputHandler.cs",
-              "RelativeToolTip": "Helpers\\InputHandler.cs",
-              "ViewState": "AgIAACEAAAAAAAAAAAAmwDYAAAAIAAAAAAAAAA==",
+              "Title": "ScreenUtils.cs",
+              "DocumentMoniker": "Z:\\Projects\\Coding\\Android\\AndroPen\\AndroPenWindows\\Helpers\\ScreenUtils.cs",
+              "RelativeDocumentMoniker": "Helpers\\ScreenUtils.cs",
+              "ToolTip": "Z:\\Projects\\Coding\\Android\\AndroPen\\AndroPenWindows\\Helpers\\ScreenUtils.cs",
+              "RelativeToolTip": "Helpers\\ScreenUtils.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAGAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-05T17:17:52.441Z",
+              "WhenOpened": "2025-01-05T23:01:32.629Z",
               "EditorCaption": ""
             }
           ]

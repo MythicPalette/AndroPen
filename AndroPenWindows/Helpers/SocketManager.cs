@@ -1,12 +1,10 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
 
 namespace AndroPen.Helpers;
 
 internal class SocketManager
 {
-    protected byte[] PACKET_SIGNATURE = [0x0D, 0x64, 0x81, 0x40, 0xA5, 0x34, 0x76, 0x34];
     protected int _port = 18998;
     protected TcpListener _listener;
 
@@ -14,61 +12,54 @@ internal class SocketManager
 
     protected List<Client> _clients;
 
-    // initialize
+    protected bool _shutingDown = false;
+
+    /// <summary>
+    /// Default constructor.
+    /// </summary>
     internal SocketManager()
     {
-        _clients = new();
-        _listener = new( IPAddress.Any , this._port );
-        _listenThread = new Thread( () => ListenWorker() );
+        this._clients = new();
+        this._listener = new( IPAddress.Any, this._port );
+        this._listenThread = new Thread( () => ListenWorker() );
     }
 
-    // Accept Connection
-    internal void Start()
-    {
-        _listenThread.Start();
-    }
+    /// <summary>
+    /// Start the listener and begin accepting clients.
+    /// </summary>
+    internal void Start() => this._listenThread.Start();
 
     /// <summary>
     /// Accepts client connections and creates client workers.
     /// </summary>
-    protected void ListenWorker() {
+    protected void ListenWorker()
+    {
         try
         {
-            _listener.Start();
+            this._listener.Start();
             Logging.Log( "Waiting for connection." );
-            while (true)
+            while( !this._shutingDown )
             {
                 Socket sock = this._listener.AcceptSocket();
                 Client client = new(sock);
                 client.Disposed += ( s, e ) => this._clients.Remove( client );
-                //Logging.Log( "Connection established" );
-                //var childThread = new Thread(() => ClientWorker(sock));
-                //childThread.Start();
                 this._clients.Add( client );
             }
-        } catch (Exception ex) 
+        }
+        catch( Exception ex )
         {
-            Logging.Error( ex.ToString());
+            Logging.Error( ex.ToString() );
         }
     }
 
-    protected bool IsSignature( byte[] test)
-    {
-        // Length must match.
-        if (test.Length != PACKET_SIGNATURE.Length)
-            return false;
-
-        // Match every byte.
-        for ( int i = 0; i < PACKET_SIGNATURE.Length; i++ )
-            if (test[i] != PACKET_SIGNATURE[i] ) return false;
-
-        return true;
-    }
-
+    /// <summary>
+    /// Shutdown the socket manager and dispose of the listener.
+    /// </summary>
     public void Dispose()
     {
         this._listener.Stop();
         this._listener.Dispose();
+        this._shutingDown = true;
         this._listenThread.Join();
     }
 }

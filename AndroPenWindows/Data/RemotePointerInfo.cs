@@ -1,136 +1,176 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace AndroPen.Data;
 
-namespace AndroPen.Data;
-
+/// <summary>
+/// Enumerable for determining the type of event being sent from
+/// the Android device.
+/// </summary>
 public enum RemoteEventType
 {
-    DOWN,
-    POINTER_DOWN,
-    MOVE,
-    UP,
-    POINTER_UP,
-    HOVER_ENTER,
-    HOVER_MOVE,
-    HOVER_EXIT
+    Down,
+    PointerDown,
+    Move,
+    Up,
+    PointerUp,
+    HoverEnter,
+    HoverMove,
+    HoverExit
 }
 
+/// <summary>
+/// Enumerable for determining the type of pointer that created
+/// the event on the Android Device
+/// </summary>
 public enum RemotePointerType
 {
-    PEN,
-    TOUCH,
-    FINGER
+    Pen,
+    Touch,
+    Finger
 }
 
+/// <summary>
+/// Converts binary data from a remote event on the Android device
+/// into named variables for easy usage.
+/// </summary>
 public class RemotePointerInfo
 {
+    /// <summary>
+    /// The total number of bytes that a RemotePointInfo takes when
+    /// serialized into a <see cref="byte"/> array.
+    /// </summary>
     public const int BYTE_LENGTH = 56;
+
+    /// <summary>
+    /// The <see cref="int"/> id of the pointer. This is used for
+    /// identifying the pointer to the system and is vital for updating
+    /// the position of pointers when a finger or pen moves across the screen.
+    /// </summary>
     public int PointerId { get; set; }
+
+    /// <summary>
+    /// The type of event that was triggered on the remote device. 
+    /// </summary>
     public RemoteEventType EvType { get; set; }
-    public float X { get; set; }
-    public float Y { get; set; }
+
+    /// <summary>
+    /// The x/y coordinates of where on the device the event occured.
+    /// </summary>
+    public PointF PixelPosition { get; set; }
+
     public float Pressure { get; set; }
-    public float TiltX { get; set; }
-    public float TiltY { get; set; }
+    public PointF Tilt { get; set; }
     public long TimeStamp { get; set; }
     public RemotePointerType PtrType { get; set; }
-    public float VelocityX { get; set; }
-    public float VelocityY { get; set; }
-    public int ViewWidth { get; set; }
-    public int ViewHeight { get; set; }
+    public PointF Velocity { get; set; }
+
+    public Size Size {  get; set; }
     public static RemotePointerInfo DeserializePointerInfo( byte[] data )
     {
         RemotePointerInfo pi = new();
+
+        /*
+         * Create an offset tracker for reading the bytes. This
+         * needs to be updated after every BitConverter operation
+         * to ensure that we are working with the correct bytes.
+         */
         int idx = 0;
+
+        // Get the pointer ID.
         pi.PointerId = BitConverter.ToInt32( data, idx );
-        idx += sizeof( Int32 );
+        idx += sizeof( int );
 
+        // Get the event type and cast it to RemoteEventType
         pi.EvType = (RemoteEventType)BitConverter.ToInt32( data, idx );
-        idx += sizeof( Int32 );
+        idx += sizeof( int );
 
-        pi.X = BitConverter.ToSingle( data, idx );
-        idx += sizeof( Single );
+        // Get the X and Y values for the PixelPosition
+        float x = BitConverter.ToSingle( data, idx );
+        idx += sizeof( float );
 
-        pi.Y = BitConverter.ToSingle( data, idx );
-        idx += sizeof( Single );
+        float y = BitConverter.ToSingle( data, idx );
+        idx += sizeof( float );
+        
+        // Assign the X and Y values to the position
+        pi.PixelPosition = new( x, y );
 
+        // Get the pen pressure as a float
         pi.Pressure = BitConverter.ToSingle( data, idx );
-        idx += sizeof( Single );
+        idx += sizeof( float );
 
-        pi.TiltX = BitConverter.ToSingle( data, idx );
-        idx += sizeof( Single );
+        // Get the X and Y values for the pen tilt
+        float tX = BitConverter.ToSingle( data, idx );
+        idx += sizeof( float );
 
-        pi.TiltY = BitConverter.ToSingle( data, idx );
-        idx += sizeof( Single );
+        float tY = BitConverter.ToSingle( data, idx );
+        idx += sizeof( float );
 
+        // Assign the X and Y values to the tilt
+        pi.Tilt = new( tX, tY );
+
+        // Get the event timestamp
         pi.TimeStamp = BitConverter.ToInt64( data, idx );
-        idx += sizeof( Int64 );
+        idx += sizeof( long );
 
+        // Get the type of pointer that triggered the event
         pi.PtrType = (RemotePointerType)BitConverter.ToInt32( data, idx );
-        idx += sizeof( Int32 );
+        idx += sizeof( int );
 
-        pi.VelocityX = BitConverter.ToSingle( data, idx );
-        idx += sizeof( Single );
+        // Get the X and Y velocity values of the movement.
+        float vX = BitConverter.ToSingle( data, idx );
+        idx += sizeof( float );
 
-        pi.VelocityY = BitConverter.ToSingle( data, idx );
-        idx += sizeof( Single );
+        float vY = BitConverter.ToSingle( data, idx );
+        idx += sizeof( float );
 
-        pi.ViewWidth = BitConverter.ToInt32( data, idx );
-        idx += sizeof( Single );
+        // Assign the velocity values.
+        pi.Velocity = new( vX, vY );
 
-        pi.ViewHeight = BitConverter.ToInt32( data, idx );
-        idx += sizeof( Single );
+        /*
+         * Get the width and height of the remote View that triggered
+         * the event. This is important as we use the size of the
+         * remote view to get the scale multiplier for the coordinates.
+         * Without this, it's impossible to translate coordinates from
+         * the remote system to this one.
+         */
+        int width = BitConverter.ToInt32( data, idx );
+        idx += sizeof( float );
+
+        int height = BitConverter.ToInt32( data, idx );
+        idx += sizeof( float );
+
+        // Assign the width and height as a new parameter.
+        pi.Size = new( width, height );
+
         return pi;
     }
+
     public override string ToString()
     {
         return $"RemotePointerInfo:\n" +
-               $"PointerId: {PointerId}\n" +
-               $"EvType: {EvType}\n" +
-               $"X: {X}\n" +
-               $"Y: {Y}\n" +
-               $"Pressure: {Pressure}\n" +
-               $"TiltX: {TiltX}\n" +
-               $"TiltY: {TiltY}\n" +
-               $"TimeStamp: {TimeStamp}\n" +
-               $"PtrType: {PtrType}\n" +
-               $"VelocityX: {VelocityX}\n" +
-               $"VelocityY: {VelocityY}\n" +
-               $"ViewWidth: {ViewWidth}\n" +
-               $"ViewHeight: {ViewHeight}";
-    }
-    public byte[] Serialize()
-    {
-        List<byte> buffer = new List<byte>();
-
-        // Serialize each field in the correct order
-        buffer.AddRange( BitConverter.GetBytes( PointerId ) );
-        buffer.AddRange( BitConverter.GetBytes( (int)EvType ) );
-        buffer.AddRange( BitConverter.GetBytes( X ) );
-        buffer.AddRange( BitConverter.GetBytes( Y ) );
-        buffer.AddRange( BitConverter.GetBytes( Pressure ) );
-        buffer.AddRange( BitConverter.GetBytes( TiltX ) );
-        buffer.AddRange( BitConverter.GetBytes( TiltY ) );
-        buffer.AddRange( BitConverter.GetBytes( TimeStamp ) );
-        buffer.AddRange( BitConverter.GetBytes( (int)PtrType ) );
-        buffer.AddRange( BitConverter.GetBytes( VelocityX ) );
-        buffer.AddRange( BitConverter.GetBytes( VelocityY ) );
-        buffer.AddRange( BitConverter.GetBytes( ViewWidth ) );
-        buffer.AddRange( BitConverter.GetBytes( ViewHeight ) );
-
-        return buffer.ToArray();
+               $"PointerId: {this.PointerId}\n" +
+               $"EvType: {this.EvType}\n" +
+               $"PixelPosition: <{this.PixelPosition.X}, {this.PixelPosition.Y}>\n" +
+               $"Pressure: {this.Pressure}\n" +
+               $"Tilt: <{this.Tilt.X}, {this.Tilt.Y}>\n" +
+               $"TimeStamp: {this.TimeStamp}\n" +
+               $"PtrType: {this.PtrType}\n" +
+               $"Velocity: <{this.Velocity.X}, {this.Velocity.Y}>\n" +
+               $"Size: <{this.Size.Width}, {this.Size.Height}>";
     }
 
-    public Vector2 Translate( Rectangle bounds )
+    /// <summary>
+    /// Translates the PixelPosition of the <see cref="RemotePointerInfo"/>
+    /// from the remote coordinate system to the local coordinate system.
+    /// </summary>
+    /// <param name="bounds">The <see cref="Rectangle"/> bounds of the local drawing area.</param>
+    /// <returns>A <see cref="Vector2"/> with the PixelPosition in local coordinates.</returns>
+    public Point Translate( Rectangle bounds )
     {
-        float scale = (float)bounds.Width / this.ViewWidth;
-        Vector2 p = new()
+        float scaleX = (float)bounds.Width / this.Size.Width;
+        float scaleY = (float)bounds.Height / this.Size.Height;
+        Point p = new()
         {
-            X = (int)(scale * this.X),
-            Y = (int)(scale * this.Y)
+            X = (int)(scaleX * this.PixelPosition.X),
+            Y = (int)(scaleY * this.PixelPosition.Y)
         };
 
         p.X += bounds.X;

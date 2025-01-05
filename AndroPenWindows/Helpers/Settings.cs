@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AndroPen.Data;
+﻿using AndroPen.Data;
 
 namespace AndroPen.Helpers;
 
@@ -14,7 +9,7 @@ internal static class Settings
         get => PressureCurveData.Deserialize( Properties.Settings.Default.PressureCurveValues );
         set
         {
-            Properties.Settings.Default.PressureCurveValues = value.Serialize();
+            Properties.Settings.Default.PressureCurveValues = value.SerializeToString();
             Properties.Settings.Default.Save();
         }
     }

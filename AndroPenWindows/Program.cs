@@ -7,12 +7,11 @@ namespace AndroPen;
 
 internal static class Program
 {
-    internal static InputHandler inputHandler = new InputHandler();
-    internal static SocketManager socketManager = new();
-
     private static NotifyIcon? nIcon;
 
-    internal static MainForm mainForm = new();
+    internal static InputHandler inputHandler = new InputHandler();
+    internal static SocketManager socketManager = new();
+    internal static MainForm mainForm = null!;
 
     /// <summary>
     ///  The main entry point for the application.
@@ -23,16 +22,13 @@ internal static class Program
         // To customize application configuration such as set high DPI settings or default font,
         // see https://aka.ms/applicationconfiguration.
         ApplicationConfiguration.Initialize();
-
-        foreach (Screen s in Screen.AllScreens)
-            Logging.Debug( $"Screen data dump: {s.DeviceName} :: {s.Primary} :: {s.Bounds}" );
-
         socketManager.Start();
         CreateIcon();
+        mainForm = new();
         Application.Run();
     }
 
-    internal static void CreateIcon()
+    private static void CreateIcon()
     {
         nIcon = new NotifyIcon()
         {
@@ -60,10 +56,5 @@ internal static class Program
         {
             mainForm.Show();
         };
-    }
-
-    internal static void SetCurve( PressureCurve pc, PressureCurveData data )
-    {
-        Settings.PressureCurve = data;
     }
 }
