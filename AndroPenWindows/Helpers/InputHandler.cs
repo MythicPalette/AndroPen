@@ -138,24 +138,23 @@ public class InputHandler
 
     public static float GetPressureValue( float InputPressure )
     {
-        PressureCurveData pcd = Settings.PressureCurve;
-
         // If input is below PressureStart.X, return 0
-        if( InputPressure < pcd.Threshold.X )
+        if( InputPressure < Settings.ActivationThreshold )
             return 0;
 
         // If input is above PressureEnd.X, return PressureEnd.Y
-        if( InputPressure > pcd.Maximum.X )
-            return pcd.Maximum.Y;
+        if( InputPressure > Settings.MaxEffectiveInput )
+            return Settings.MaxOutput;
 
         // Normalize the InputPressure to be between 0 and 1 based on the range [PressureStart.X, PressureEnd.X]
-        float normalizedInput = (InputPressure - pcd.Threshold.X) / (pcd.Maximum.X - pcd.Threshold.X);
+        float normalizedInput = (InputPressure - Settings.ActivationThreshold)
+            / (Settings.MaxEffectiveInput - Settings.ActivationThreshold);
 
         // Apply the softness curve (here we use a quadratic easing function, but you can experiment with others)
-        float smoothValue = ApplySoftnessCurve(normalizedInput, pcd.Softness.X, pcd.Softness.Y);
+        float smoothValue = ApplySoftnessCurve(normalizedInput, Settings.Softness.X, Settings.Softness.Y);
 
         // Interpolate between PressureStart.Y and PressureEnd.Y based on the smoothed input
-        return pcd.Threshold.Y + smoothValue * ( pcd.Maximum.Y - pcd.Threshold.Y );
+        return Settings.InitialValue + smoothValue * ( Settings.MaxOutput - Settings.InitialValue );
     }
 
     // Function to apply softness curve, for example a quadratic easing function

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AndroPen")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+14a1b8c249a6fe323c3e6f7cd629a6d974f5f761")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8083c7f658862f89cf40c5014ede77085d898307")]
 [assembly: System.Reflection.AssemblyProductAttribute("AndroPen")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AndroPen")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

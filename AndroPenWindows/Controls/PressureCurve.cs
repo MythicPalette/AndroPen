@@ -1,14 +1,12 @@
 ﻿using System.ComponentModel;
 using AndroPen.Data;
+using AndroPen.Helpers;
 
 namespace AndroPen.Controls;
 
 public class PressureCurve : Control
 {
-    public delegate void PressureCurveChangedEventHandler( PressureCurve sender, PressureCurveData e );
-    public event PressureCurveChangedEventHandler? PressureCurveChanged;
-
-    private PressureCurveData _data = new();
+    public event EventHandler? PressureCurveChanged;
 
     private const int GRID_SIZE = 5;
     private int draggedPoint = -1; // -1: None, 1: Point1, 2: Point2, 3: Point3
@@ -43,13 +41,6 @@ public class PressureCurve : Control
         SetStyle( ControlStyles.ResizeRedraw, true );
     }
 
-    /// <summary>
-    /// Sets the <see cref="PressureCurveData"/>. This is done through a setter
-    /// to ensure that it is not accidentally tampered with.
-    /// </summary>
-    /// <param name="e"></param>
-    public void SetData( PressureCurveData e ) => this._data = e;
-
     protected override void OnPaint( PaintEventArgs e )
     {
         base.OnPaint( e );
@@ -78,16 +69,14 @@ public class PressureCurve : Control
 
     private void DrawCurve( Graphics g )
     {
-        PointF p1 = PointToScreenCoords( this._data.Threshold ); // Start point
-        PointF p2 = PointToScreenCoords( this._data.Softness ); // Control point
-        PointF p3 = PointToScreenCoords( this._data.Maximum ); // End point
-
         using Pen pen = new( this.CurveColor, 2 );
 
+        PointF[] points = GetPoints();
+
         // Straight line if Point2 is at the exact center
-        if( Math.Abs( this._data.Softness.X - 0.5f ) < 0.001f && Math.Abs( this._data.Softness.Y - 0.5f ) < 0.001f )
+        if( Math.Abs( points[1].X - 0.5f ) < 0.001f && Math.Abs( points[1].Y - 0.5f ) < 0.001f )
         {
-            g.DrawLine( pen, p1, p3 );
+            g.DrawLine( pen, points[0], points[2] );
         }
         else
         {
@@ -98,11 +87,33 @@ public class PressureCurve : Control
             for( int i = 0; i <= segments; i++ )
             {
                 float t = i / (float)segments;
-                curvePoints[i] = QuadraticBezierInterpolation( p1, p2, p3, t );
+                curvePoints[i] = QuadraticBezierInterpolation( points[0], points[1], points[2], t );
             }
 
             g.DrawLines( pen, curvePoints );
         }
+    }
+
+    private PointF[] GetPoints()
+    {
+        PointF p1 = PointToScreenCoords( new()
+        {
+            X = Settings.ActivationThreshold,
+            Y = Settings.InitialValue
+        }); // Start point
+
+        PointF p2 = PointToScreenCoords( new()
+        {
+            X = Settings.Softness.X,
+            Y = Settings.Softness.Y
+        }); // Control point
+
+        PointF p3 = PointToScreenCoords( new()
+        {
+            X = Settings.MaxEffectiveInput,
+            Y = Settings.MaxOutput
+        } ); // End point
+        return [ p1, p2, p3 ];
     }
 
     // Helper function for quadratic Bézier interpolation
@@ -121,10 +132,11 @@ public class PressureCurve : Control
 
     private void DrawPoints( Graphics g )
     {
+        PointF[] points = GetPoints();
         using SolidBrush brush = new( this.NodeColor );
-        DrawPoint( g, PointToScreenCoords( this._data.Threshold ), brush );
-        DrawPoint( g, PointToScreenCoords( this._data.Softness ), brush );
-        DrawPoint( g, PointToScreenCoords( this._data.Maximum ), brush );
+        DrawPoint( g, points[0], brush );
+        DrawPoint( g, points[1], brush );
+        DrawPoint( g, points[2], brush );
     }
 
     private static void DrawPoint( Graphics g, PointF p, Brush brush )
@@ -138,13 +150,14 @@ public class PressureCurve : Control
         if( e.Button != MouseButtons.Left )
             return;
 
+        PointF[] points = GetPoints();
         PointF mousePoint = new(e.X, e.Y);
 
-        if( IsPointHit( PointToScreenCoords( this._data.Threshold ), mousePoint ) )
+        if( IsPointHit( points[0], mousePoint ) )
             this.draggedPoint = 1;
-        else if( IsPointHit( PointToScreenCoords( this._data.Softness ), mousePoint ) )
+        else if( IsPointHit( points[1], mousePoint ) )
             this.draggedPoint = 2;
-        else if( IsPointHit( PointToScreenCoords( this._data.Maximum ), mousePoint ) )
+        else if( IsPointHit( points[2], mousePoint ) )
             this.draggedPoint = 3;
         else
             this.draggedPoint = -1;
@@ -155,16 +168,26 @@ public class PressureCurve : Control
     protected override void OnMouseDoubleClick( MouseEventArgs e )
     {
         base.OnMouseDoubleClick( e );
+
+        PointF[] points = GetPoints();
         PointF mousePoint = new(e.X, e.Y);
 
-        if( IsPointHit( PointToScreenCoords( this._data.Threshold ), mousePoint ) )
-            this._data.SetThreshold( new() { X = 0f, Y = 0f } );
+        if( IsPointHit( points[0], mousePoint ) )
+        {
+            Settings.ActivationThreshold = 0f;
+            Settings.InitialValue = 0f;
+        }
 
-        else if( IsPointHit( PointToScreenCoords( this._data.Softness ), mousePoint ) )
-            this._data.SetSoftness( new() { X = 0.5f, Y = 0.5f } );
+        else if( IsPointHit( points[1], mousePoint ) )
+        {
+            Settings.Softness = new() { X = 0.5f, Y = 0.5f };
+        }
 
-        else if( IsPointHit( PointToScreenCoords( this._data.Maximum ), mousePoint ) )
-            this._data.SetCap( new() { X = 1f, Y = 1f } );
+        else if( IsPointHit( points[2], mousePoint ) )
+        {
+            Settings.MaxEffectiveInput = 1f;
+            Settings.MaxOutput = 1f;
+        }
         Invalidate(); // Redraw to show the updated positions
     }
 
@@ -180,15 +203,15 @@ public class PressureCurve : Control
         switch( this.draggedPoint )
         {
             case 1:
-                // Threshold can only ever move on the X Axis as it corresponds to
-                // the 
-                this._data.SetThreshold( mousePoint );
+                Settings.ActivationThreshold = mousePoint.X;
+                Settings.InitialValue = mousePoint.Y;
                 break;
             case 2:
-                this._data.SetSoftness( mousePoint );
+                Settings.Softness = mousePoint;
                 break;
             case 3:
-                this._data.SetCap( mousePoint );
+                Settings.MaxEffectiveInput = mousePoint.X;
+                Settings.MaxOutput = mousePoint.Y;
                 break;
         }
 
@@ -198,7 +221,7 @@ public class PressureCurve : Control
     protected override void OnMouseUp( MouseEventArgs e )
     {
         this.draggedPoint = -1; // Stop dragging
-        this.PressureCurveChanged?.Invoke( this, this._data );
+        this.PressureCurveChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private static bool IsPointHit( PointF point, PointF mousePoint, float radius = 10f ) =>

@@ -46,5 +46,77 @@ namespace AndroPen.Properties {
                 this["ScreenDevice"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public float ActivationThreshold {
+            get {
+                return ((float)(this["ActivationThreshold"]));
+            }
+            set {
+                this["ActivationThreshold"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public float InitialValue {
+            get {
+                return ((float)(this["InitialValue"]));
+            }
+            set {
+                this["InitialValue"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.5")]
+        public float SoftnessX {
+            get {
+                return ((float)(this["SoftnessX"]));
+            }
+            set {
+                this["SoftnessX"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.5")]
+        public float SoftnessY {
+            get {
+                return ((float)(this["SoftnessY"]));
+            }
+            set {
+                this["SoftnessY"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public float MaxEffectiveInput {
+            get {
+                return ((float)(this["MaxEffectiveInput"]));
+            }
+            set {
+                this["MaxEffectiveInput"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public float MaxOutput {
+            get {
+                return ((float)(this["MaxOutput"]));
+            }
+            set {
+                this["MaxOutput"] = value;
+            }
+        }
     }
 }

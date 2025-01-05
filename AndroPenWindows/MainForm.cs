@@ -9,10 +9,6 @@ public partial class MainForm : Form
     {
         InitializeComponent();
         Program.inputHandler.PenInput += OnPenInput;
-        this.pressureCuve1.PressureCurveChanged += ( s, e ) =>
-        {
-            Settings.PressureCurve = e;
-        };
 
         foreach( Screen s in Screen.AllScreens )
             _ = this.ScreenSelection.Items.Add( s.DeviceName );
@@ -29,32 +25,26 @@ public partial class MainForm : Form
         UpdateLabel();
     }
 
-    protected override void OnLoad( EventArgs e )
-    {
-        base.OnLoad( e );
-        this.pressureCuve1.SetData( Settings.PressureCurve );
-    }
-
     private void OnPenInput( Point loc, float inPressure, float outPressure )
     {
         if( this.InvokeRequired )
         {
             Invoke( new Action( () => OnPenInput( loc, inPressure, outPressure ) ) );
+            return;
         }
-        else
-        {
-            this.barInputPressure.Value = Math.Clamp(
-                    (int)( this.barInputPressure.Maximum * inPressure ),
-                    0,
-                    this.barInputPressure.Maximum
-                );
 
-            this.barOutputPressure.Value = Math.Clamp(
-                    (int)( this.barOutputPressure.Maximum * outPressure ),
-                    0,
-                    this.barOutputPressure.Maximum
-                );
-        }
+        this.barInputPressure.Value = Math.Clamp(
+                (int)( this.barInputPressure.Maximum * inPressure ),
+                0,
+                this.barInputPressure.Maximum
+            );
+
+        this.barOutputPressure.Value = Math.Clamp(
+                (int)( this.barOutputPressure.Maximum * outPressure ),
+                0,
+                this.barOutputPressure.Maximum
+            );
+        
     }
 
     private void UpdateLabel()
