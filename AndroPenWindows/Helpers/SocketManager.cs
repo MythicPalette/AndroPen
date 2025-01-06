@@ -19,9 +19,9 @@ internal class SocketManager
     /// </summary>
     internal SocketManager()
     {
-        this._clients = new();
+        this._clients = [];
         this._listener = new( IPAddress.Any, this._port );
-        this._listenThread = new Thread( () => ListenWorker() );
+        this._listenThread = new Thread( ListenWorker );
     }
 
     /// <summary>

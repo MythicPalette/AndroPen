@@ -1,0 +1,6 @@
+<resources>
+    <declare-styleable name="TouchInputView">
+        <attr name="strokeWidth" format="dimension" />
+        <attr name="borderColor" format="color" />
+    </declare-styleable>
+</resources>

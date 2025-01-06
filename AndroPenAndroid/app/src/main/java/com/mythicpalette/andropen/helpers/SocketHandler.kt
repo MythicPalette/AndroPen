@@ -27,8 +27,6 @@ class SocketHandler(private var host: String, private var port: Int) {
     private var inputStream: InputStream? = null
     private var outputStream: OutputStream? = null
 
-    private var PACKET_SIGNATURE = intArrayOf(25613, 16513, 13461, 13414);
-
     // EVENT HANDLING
     private val listeners = mutableListOf<SocketStateListener>();
     fun addListener(listener: SocketStateListener) {
@@ -99,14 +97,6 @@ class SocketHandler(private var host: String, private var port: Int) {
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                // Add the packet signature to the buffer.
-//                val buffer = ByteBuffer.allocate(bytes.size + 16).order(ByteOrder.LITTLE_ENDIAN)
-//                buffer.putInt(PACKET_SIGNATURE[0])
-//                buffer.putInt(PACKET_SIGNATURE[1])
-//                buffer.putInt(PACKET_SIGNATURE[2])
-//                buffer.putInt(PACKET_SIGNATURE[3])
-//                buffer.put(bytes)
-
                 outputStream?.write(bytes);
                 outputStream?.flush();
             } catch (e: IOException) {

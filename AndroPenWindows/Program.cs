@@ -22,10 +22,15 @@ internal static class Program
         // To customize application configuration such as set high DPI settings or default font,
         // see https://aka.ms/applicationconfiguration.
         ApplicationConfiguration.Initialize();
+
+        Logging.Init();
         socketManager.Start();
         CreateIcon();
         mainForm = new();
+
         Application.Run();
+
+        Logging.Shutdown();
     }
 
     private static void CreateIcon()
@@ -38,11 +43,8 @@ internal static class Program
         };
 
         ContextMenuStrip cms = new();
-        cms.Items.Add( "Show", null, ( s, e ) =>
-        {
-            mainForm.Show();
-        } );
-        cms.Items.Add( "Exit", null, ( s, e ) =>
+        _ = cms.Items.Add( "Show", null, ( s, e ) => mainForm.Show() );
+        _ = cms.Items.Add( "Exit", null, ( s, e ) =>
         {
             nIcon.Visible = false;
             nIcon.Dispose();

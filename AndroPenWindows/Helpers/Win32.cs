@@ -1,5 +1,9 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Diagnostics.PerformanceData;
+using System.Diagnostics;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using AndroPen.Data;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace AndroPen.Helpers;
 
@@ -67,4 +71,63 @@ public static class Win32
      */
     internal const int SM_XVIRTUALSCREEN = 76;
     internal const int SM_YVIRTUALSCREEN = 77;
+
+    internal static string Stringify( this PointerTypeInfoTouch[] pti )
+    {
+        string result = "[";
+
+        for( int i = 0; i < pti.Length; i++ )
+        {
+            result +=  $@"
+{{
+    ""type"": {pti[i].type},
+    ""penInfo"": {{
+        ""pointerInfo"": { pti[i].touchInfo.pointerInfo.Stringify()},
+        ""touchFlags"": { pti[i].touchInfo.touchFlags},
+        ""touchMask"": { pti[i].touchInfo.touchMask},
+        ""rcContact"": { pti[i].touchInfo.rcContact },
+        ""pressure"": { pti[i].touchInfo.pressure},
+     }}
+}}";
+        }
+        return result + "]";
+    }
+
+    internal static string Stringify( this PointerTypeInfoPen pti )
+    {
+        string result = $@"
+{{
+    ""type"": {pti.type},
+    ""penInfo"": {{
+        ""pointerInfo"": {pti.penInfo.pointerInfo.Stringify()},
+        ""penFlags"": {pti.penInfo.penFlags},
+        ""penMask"": {pti.penInfo.penMask},
+        ""pressure"": { pti.penInfo.pressure},
+        ""rotation"": {pti.penInfo.rotation},
+        ""tilt"": {{ ""X"": {pti.penInfo.tiltX}, ""Y"": {pti.penInfo.tiltY} }},
+    }}
+}}
+";
+        return result;
+    }
+
+    internal static string Stringify( this PointerInfo pti )
+    {
+        return $@"
+{{
+    ""PointerType"": ""{pti.PointerType}"",
+    ""pointerId"": {pti.pointerId},
+    ""frameId"": {pti.frameId},
+    ""pointerFlags"": ""{pti.pointerFlags}"",
+    ""sourceDevice"": {pti.sourceDevice},
+    ""hwndTarget"": {pti.hwndTarget},
+    ""ptPixelLocation"": {{ ""X"": {pti.ptPixelLocation.X}, ""Y"": {pti.ptPixelLocation.Y} }},
+    ""dwTime"": {pti.dwTime},
+    ""historyCount"": {pti.historyCount},
+    ""inputData"": {pti.inputData},
+    ""dwKeyStates"": {pti.dwKeyStates},
+    ""PerformanceCount"": {pti.PerformanceCount},
+    ""ButtonChangeType"": ""{pti.ButtonChangeType}""
+}}";
+    }
 }

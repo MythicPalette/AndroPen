@@ -5,14 +5,14 @@ import java.nio.ByteOrder
 
 data class PointerInfo(
     var pointerId: Int, // Unique pointer identifier (e.g., a finger or stylus)
-    var eventType: EventType, // Event type (DOWN, MOVE, UP, HOVER_ENTER, HOVER_MOVE, HOVER_EXIT)
+    var eventType: EventType = EventType.MOVE, // Event type (DOWN, MOVE, UP, HOVER_ENTER, HOVER_MOVE, HOVER_EXIT)
     var x: Float, // X coordinate of the pointer
     var y: Float, // Y coordinate of the pointer
-    var pressure: Float, // Pressure applied (0.0 - 1.0)
+    var pressure: Float = 0f, // Pressure applied (0.0 - 1.0)
     var tiltX: Float = 0f, // Tilt in X direction for pen input
     var tiltY: Float = 0f, // Tilt in Y direction for pen input
     var timeStamp: Long, // Time of the event (milliseconds)
-    var pointerType: PointerType, // Type of pointer: PEN, TOUCH, etc.
+    var pointerType: PointerType = PointerType.PEN, // Type of pointer: PEN, TOUCH, etc.
     var velocityX: Float = 0f, // Velocity of movement along the X axis
     var velocityY: Float = 0f,  // Velocity of movement along the Y axis
     var viewWidth: Int = 0,

@@ -25,8 +25,7 @@ public class InputHandler
         for( int i = 0; i < rpis.Length; i++ )// (RemotePointerInfo rp in rpis)
         {
 
-            PointerFlags pointerFlags = PointerFlags.None;
-
+            PointerFlags pointerFlags;
             if( rpis[i].EvType is RemoteEventType.Down or RemoteEventType.PointerDown )
                 pointerFlags = PointerFlags.Down | PointerFlags.InRange | PointerFlags.InContact;
 
@@ -67,7 +66,7 @@ public class InputHandler
                         Y = point.Y - 2,
                         Width = point.X + 2,
                         Height = point.Y + 2
-                    } // Contact area (width = 50, height = 50)
+                    }
                 }
             };
         }
@@ -83,13 +82,21 @@ public class InputHandler
         // Prepare the flags
         PointerFlags pFlags = PointerFlags.None;
 
-        // If the pointer is down or moving, then it is in contact
-        if( rpi.EvType is RemoteEventType.Down or RemoteEventType.Move )
-            pFlags |= PointerFlags.Down | PointerFlags.InContact | PointerFlags.InRange;
+        // If the pointer has just gone down
+        if( rpi.EvType is RemoteEventType.Down or RemoteEventType.PointerDown )
+            pFlags = PointerFlags.Down | PointerFlags.InRange | PointerFlags.InContact;
 
-        // On Hover enter or move, it is in range but not down or in contact
-        else if( rpi.EvType is RemoteEventType.HoverEnter or RemoteEventType.HoverMove )
-            pFlags |= PointerFlags.Up | PointerFlags.InRange;
+        // The pointer is moving across the surface.
+        else if( rpi.EvType is RemoteEventType.Move )
+            pFlags = PointerFlags.Update | PointerFlags.InRange | PointerFlags.InContact;
+
+        // On Hover enter it is in range but not down or in contact
+        else if( rpi.EvType is RemoteEventType.HoverEnter )
+            pFlags |= PointerFlags.InRange;
+
+        // Update the position of the cursor 
+        else if( rpi.EvType is RemoteEventType.HoverMove )
+            pFlags |= PointerFlags.Update | PointerFlags.InRange;
 
         // This is when it leaves hover and/or stops touching.
         else
@@ -129,10 +136,6 @@ public class InputHandler
             int errorCode = Marshal.GetLastWin32Error();
             Logging.Error( $"Pen input failed. Last error code: {errorCode}" );
             return;
-        }
-        else
-        {
-            this.PenInput?.Invoke( pti.penInfo.pointerInfo.ptPixelLocation, rpi.Pressure, outPressure );
         }
     }
 

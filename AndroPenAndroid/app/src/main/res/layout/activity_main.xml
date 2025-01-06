@@ -7,11 +7,10 @@
 
     <!-- GestureScreen view (e.g., a custom view or a placeholder for your screen) -->
     <!-- Adding a light gray border around the FrameLayout -->
-    <ImageButton
+    <com.mythicpalette.andropen.SignalButton
         android:id="@+id/reconnect_button"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:background="@color/red"
         android:contentDescription="@string/connection"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -27,12 +26,14 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:padding="2dp"
+        android:padding="1dp"
         android:layout_margin="128dp">
-        <View
+        <com.mythicpalette.andropen.TouchInputView
             android:id="@+id/drawArea"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/primary_dark"/>
+            android:background="@color/primary_dark"
+            app:borderColor="@color/red"
+            app:strokeWidth="2dp"/>
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
