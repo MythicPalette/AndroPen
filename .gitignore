@@ -1,5 +1,3 @@
 **/.vs/
 **/bin/
-/AndroPenWindows/.vs
-/AndroPenWindows/bin
-/AndroPenWindows/obj
+**/obj/
