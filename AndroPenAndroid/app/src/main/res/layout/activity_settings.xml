@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SettingsActivity"
+    android:background="@color/primary_dark">
+        <GridLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:columnCount="2"
+            app:layout_constraintWidth_max="300dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:text="@string/ip_address"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/text" />
+
+            <EditText
+                android:id="@+id/ip_text"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"
+                android:hint="@string/ip_address"
+                android:importantForAutofill="no"
+                android:inputType="text"
+                android:text="@string/default_ip"
+                android:textColor="@color/text"
+                android:textAlignment="textEnd"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:text="@string/port_address"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/text" />
+
+            <EditText
+                android:id="@+id/port_text"
+                android:layout_height="wrap_content"
+                android:hint="@string/port_address"
+                android:layout_gravity="fill"
+                android:importantForAutofill="no"
+                android:inputType="number"
+                android:minWidth="100dp"
+                android:text="@string/default_port"
+                android:textColor="@color/text"
+                android:textAlignment="textEnd" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="2"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/block_touch"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="@color/text"/>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/touch_switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <Space
+                android:layout_height="0dp"
+                android:layout_rowWeight="1"
+                android:layout_columnSpan="2" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_columnSpan="2">
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/settings_save_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    style="@style/DarkModeButton"
+                    android:text="@string/save" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/settings_cancel_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    style="@style/DarkModeButton"
+                    android:text="@string/cancel" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+        </GridLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

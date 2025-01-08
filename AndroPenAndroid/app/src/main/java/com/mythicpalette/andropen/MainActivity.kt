@@ -1,27 +1,18 @@
 package com.mythicpalette.andropen
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
-import android.view.GestureDetector
 import android.view.MotionEvent
-import android.view.ScaleGestureDetector
 import android.view.View
-import android.widget.Toast
-import androidx.activity.ComponentActivity
-import com.mythicpalette.andropen.data.EventType
-import com.mythicpalette.andropen.data.PointerInfo
-import com.mythicpalette.andropen.data.PointerType
-import com.mythicpalette.andropen.data.serialize
+import android.widget.ImageButton
+import androidx.appcompat.app.AppCompatActivity
 import com.mythicpalette.andropen.helpers.ConnectionState
 import com.mythicpalette.andropen.helpers.SocketHandler
 import com.mythicpalette.andropen.helpers.SocketStateListener
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
 
-private var MESSAGE_TAP: Int = 1
-
-class MainActivity : ComponentActivity() {
-    private var socketHandler: SocketHandler = SocketHandler("192.168.0.13", 18998 );
+class MainActivity : AppCompatActivity() {
+    private var socketHandler: SocketHandler = SocketHandler();
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,11 +26,11 @@ class MainActivity : ComponentActivity() {
                 else println("Disconnected")
             }
         })
-        socketHandler.connectToSocket();
+        socketHandler.connectToSocket(this);
         findViewById<View>(R.id.reconnect_button).setOnTouchListener{ v, ev ->
             when (ev.actionMasked) {
                 MotionEvent.ACTION_UP -> {
-                    socketHandler.connectToSocket();
+                    socketHandler.connectToSocket(this);
                     true
                 }
                 else -> {
@@ -48,5 +39,10 @@ class MainActivity : ComponentActivity() {
             }
         }
         findViewById<TouchInputView>(R.id.drawArea).socketHandler = this.socketHandler
+        findViewById<ImageButton>(R.id.show_settings_button).setOnClickListener{ _ ->
+            val intent = Intent(this, SettingsActivity::class.java)
+            startActivity(intent)
+            true
+        }
     }
 }

@@ -1,14 +1,20 @@
 package com.mythicpalette.andropen.helpers
 
+import android.content.Context
+import android.net.wifi.WifiInfo
+import android.net.wifi.WifiManager
 import com.mythicpalette.andropen.data.PointerInfo
 import com.mythicpalette.andropen.data.serialize
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
+import java.net.InetAddress
+import java.net.NetworkInterface
 import java.net.Socket
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -22,7 +28,7 @@ data class ConnectionState (
 interface SocketStateListener {
     fun onConnectionStateChanged(state: ConnectionState);
 }
-class SocketHandler(private var host: String, private var port: Int) {
+class SocketHandler() {
     private var socket: Socket? = null
     private var inputStream: InputStream? = null
     private var outputStream: OutputStream? = null
@@ -44,11 +50,16 @@ class SocketHandler(private var host: String, private var port: Int) {
     }
 
     // Step 1: Function to connect to the socket server
-    internal fun connectToSocket() {
+    internal fun connectToSocket(context: Context) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                println("Connected to the server at $host:$port")
-                socket = Socket(host, port);
+                val host = Settings.getIpAddress(context)
+
+                // Don't attempt to connect if the IP address isn't set.
+                if ( host == "0.0.0.0") return@launch
+
+                val port = Settings.getPort(context)
+                socket = Socket(host, port)
 
                 inputStream = socket?.getInputStream()
                 outputStream = socket?.getOutputStream()
@@ -56,19 +67,19 @@ class SocketHandler(private var host: String, private var port: Int) {
                 monitorSocket {
                     notifyStateChanged(ConnectionState(false, host, port))
                 }
+                println("Connected to the server at $host:$port")
 
                 notifyStateChanged(ConnectionState(true, host, port));
                 // Start listening for server messages in the background
-                listenForServerMessages()
+                listenForServerMessages(host, port)
             } catch (e: IOException) {
                 e.printStackTrace()
-                //showToast("Error connecting to the server")
             }
         }
     }
 
     // Step 2: Function to listen for incoming messages from the server
-    private suspend fun listenForServerMessages() {
+    private suspend fun listenForServerMessages(host: String, port: Int) {
         withContext(Dispatchers.IO) {
             try {
                 val buffer = ByteArray(1024)

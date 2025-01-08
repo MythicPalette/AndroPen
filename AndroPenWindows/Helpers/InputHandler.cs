@@ -24,7 +24,6 @@ public class InputHandler
         PointerTypeInfoTouch[] outData = new PointerTypeInfoTouch[ rpis.Length ];
         for( int i = 0; i < rpis.Length; i++ )// (RemotePointerInfo rp in rpis)
         {
-
             PointerFlags pointerFlags;
             if( rpis[i].EvType is RemoteEventType.Down or RemoteEventType.PointerDown )
                 pointerFlags = PointerFlags.Down | PointerFlags.InRange | PointerFlags.InContact;
@@ -119,15 +118,15 @@ public class InputHandler
                 pointerInfo = new()
                 {
                     PointerType = PointerInputType.Pen,
-                    pointerId = (uint)rpi.PointerId,
-                    pointerFlags = pFlags,
-                    ptPixelLocation = point,
+                    pointerId = (uint)rpi.PointerId,    // Unique identifier for the pointer.
+                    pointerFlags = pFlags,              // These flags describe the event.
+                    ptPixelLocation = point,            // The coordinates of the event
                 },
-                penFlags = PenFlags.None,                   // Optional flag for pen-related properties
-                penMask = pMask ,                           // Indicate that the pressure information is included
-                pressure = (uint)(1024f * outPressure),    //(uint)(rpi.Pressure * 1024),
-                tiltX = (int)rpi.Tilt.X,                     // Optional, if neededS
-                tiltY = (int)rpi.Tilt.Y                      // Optional, if needed
+                penFlags = PenFlags.None,               // Optional flag for pen-related properties
+                penMask = pMask ,                       // Indicate that the pressure and tilt information is included
+                pressure = (uint)(1024f * outPressure), //(uint)(rpi.Pressure * 1024),
+                tiltX = (int)rpi.Tilt.X,                // Optional, if neededS
+                tiltY = (int)rpi.Tilt.Y                 // Optional, if needed
             }
         };
 

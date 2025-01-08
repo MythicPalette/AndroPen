@@ -1,4 +1,15 @@
 <resources>
     <string name="app_name">AndroPen</string>
     <string name="connection">Connection</string>
+
+
+    <string name="ip_address">IP Address:</string>
+    <string name="default_ip">0.0.0.0</string>
+    <string name="port_address">Port:</string>
+    <string name="default_port">18998</string>
+
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="block_touch">Block touch while pen is active</string>
+    <string name="settings">Settings</string>
 </resources>

@@ -62,7 +62,10 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation(libs.androidx.cardview)
     implementation(libs.androidx.constraintlayout)
-    implementation("com.google.code.gson:gson:2.10.1")  // Ensure you use the latest version
+    implementation("com.google.code.gson:gson:2.10.1")
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    implementation(libs.androidx.activity)  // Ensure you use the latest version
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
