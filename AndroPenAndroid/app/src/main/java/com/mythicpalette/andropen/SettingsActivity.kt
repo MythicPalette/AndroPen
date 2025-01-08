@@ -21,9 +21,9 @@ class SettingsActivity : AppCompatActivity() {
             insets
         }
 
-        findViewById<EditText>(R.id.ip_text).setText(Settings.getIpAddress(this))
-        findViewById<EditText>(R.id.port_text).setText(Settings.getPort(this).toString())
-        findViewById<SwitchCompat>(R.id.touch_switch).isChecked = Settings.getPenBlocksTouch(this)
+        findViewById<EditText>(R.id.ip_text).setText(Settings.IpAddress)
+        findViewById<EditText>(R.id.port_text).setText(Settings.Port.toString())
+        findViewById<SwitchCompat>(R.id.touch_switch).isChecked = Settings.PenBlocksTouch
 
         findViewById<AppCompatButton>(R.id.settings_save_button).setOnClickListener{ _ ->
             onSave()
@@ -34,22 +34,11 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
-    fun onSave() {
-        // Get SharedPreferences instance
-        val sharedPreferences = getSharedPreferences("MyAppPreferences", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
+    private fun onSave() {
+        val ip = findViewById<EditText>(R.id.ip_text).text.toString()
+        val port = findViewById<EditText>(R.id.port_text).text.toString().toInt()
+        val penTouch = findViewById<SwitchCompat>(R.id.touch_switch).isChecked
 
-        // push the values.
-        // IP
-        val ipText = findViewById<EditText>(R.id.ip_text).text.toString()
-        editor.putString("ip_address", ipText)
-        // Port
-        val portText = findViewById<EditText>(R.id.port_text).text.toString().toInt()
-        editor.putInt("port_address", portText)
-        // Block Touch when pen is down
-        val blockTouch = findViewById<SwitchCompat>(R.id.touch_switch).isChecked
-        editor.putBoolean("block_touch_pen", blockTouch)  // Save asynchronously
-
-        editor.apply()
+        Settings.set(this, ip=ip, port=port, penTouch=penTouch)
     }
 }

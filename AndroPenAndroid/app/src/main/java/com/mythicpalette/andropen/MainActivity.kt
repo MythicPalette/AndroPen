@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import com.mythicpalette.andropen.helpers.ConnectionState
+import com.mythicpalette.andropen.helpers.Settings
 import com.mythicpalette.andropen.helpers.SocketHandler
 import com.mythicpalette.andropen.helpers.SocketStateListener
 
@@ -18,6 +19,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        Settings.init(this)
 
         socketHandler.addListener(object: SocketStateListener {
             override fun onConnectionStateChanged(state: ConnectionState) {

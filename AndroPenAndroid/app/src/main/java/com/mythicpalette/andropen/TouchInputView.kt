@@ -16,6 +16,7 @@ import com.mythicpalette.andropen.data.EventType
 import com.mythicpalette.andropen.data.PointerInfo
 import com.mythicpalette.andropen.data.PointerType
 import com.mythicpalette.andropen.data.serialize
+import com.mythicpalette.andropen.helpers.Settings
 import com.mythicpalette.andropen.helpers.SocketHandler
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -23,12 +24,11 @@ import java.nio.ByteOrder
 /**
  * TODO: document your custom view class.
  */
-class TouchInputView : Button {
+class TouchInputView : View {
     private var penHovering: Boolean = false
     private var penTouching: Boolean = false
 
     var socketHandler: SocketHandler? = null
-
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
         init(attrs);
@@ -74,15 +74,6 @@ class TouchInputView : Button {
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        // Draw the border
-        val padding = borderPaint.strokeWidth / 2
-//        canvas.drawRect(
-//            padding,
-//            padding,
-//            width - padding,
-//            height - padding,
-//            borderPaint
-//        )
         val lineLength = this.width*0.1f
         val cornerX: Float = this.width.toFloat()
         val cornerY: Float = this.height.toFloat()
@@ -145,7 +136,7 @@ class TouchInputView : Button {
 
                 MotionEvent.TOOL_TYPE_FINGER -> {
                     // If the pen is in use, disable touching.
-                    if ( penHovering || penTouching ) continue
+                    if ( Settings.PenBlocksTouch && ( penHovering || penTouching )) continue
 
                     pi.pointerType = PointerType.TOUCH;
 

@@ -53,12 +53,12 @@ class SocketHandler() {
     internal fun connectToSocket(context: Context) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val host = Settings.getIpAddress(context)
+                val host = Settings.IpAddress
 
                 // Don't attempt to connect if the IP address isn't set.
                 if ( host == "0.0.0.0") return@launch
 
-                val port = Settings.getPort(context)
+                val port = Settings.Port
                 socket = Socket(host, port)
 
                 inputStream = socket?.getInputStream()
