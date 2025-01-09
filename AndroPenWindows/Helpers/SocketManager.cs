@@ -59,8 +59,11 @@ internal class SocketManager
         }
         catch( Exception ex )
         {
-            Logging.Error( ex.ToString() );
-            Shutdown();
+            if( !this._shutingDown )
+            {
+                Logging.Error( ex.ToString() );
+                Shutdown();
+            }
         }
     }
 
@@ -72,7 +75,6 @@ internal class SocketManager
         this._shutingDown = true;
         this._listener?.Stop();
         this._listener?.Dispose();
-        this._listenThread?.Join();
         this._listener = null;
         this._listenThread = null;
     }

@@ -14,11 +14,14 @@ internal static class Logging
     /// </summary>
     internal static void Init()
     {
+        string path = Environment.GetFolderPath( Environment.SpecialFolder.MyDocuments );
+        string file = Path.Combine( path, "AndroPen.log" );
+
+        if ( File.Exists( file ) )
+            File.Delete( file );
+
         _loggingThread = new(() =>
         {
-            string path = Environment.GetFolderPath( Environment.SpecialFolder.MyDocuments );
-            string file = Path.Combine( path, "AndroPen.log" );
-
             foreach ( string log in _queue.GetConsumingEnumerable() )
             {
                 Console.WriteLine( log );

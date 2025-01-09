@@ -66,6 +66,17 @@ public partial class MainForm : Form
             UpdateLabel();
         };
         UpdateLabel();
+
+        this.PortInput.Value = Settings.Port;
+        this.PortInput.ValueChanged += ( s, e ) => Settings.Port = (int)this.PortInput.Value;
+        this.PortInput.KeyDown += ( s, e ) =>
+        {
+            if( e.KeyCode == Keys.Enter )
+            {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+            }
+        };
     }
 
     private void OnPenInput( Point loc, float inPressure, float outPressure )

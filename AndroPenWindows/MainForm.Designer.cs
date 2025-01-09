@@ -203,6 +203,7 @@
             // 
             this.PortInput.Font = new Font( "Microsoft Sans Serif", 15.75F );
             this.PortInput.Location = new Point( 380, 44 );
+            this.PortInput.Maximum = new decimal( new int[] { 65535, 0, 0, 0 } );
             this.PortInput.Name = "PortInput";
             this.PortInput.Size = new Size( 128, 31 );
             this.PortInput.TabIndex = 14;

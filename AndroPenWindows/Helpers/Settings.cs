@@ -71,7 +71,9 @@ internal static class Settings
         get => Properties.Settings.Default.Port;
         set
         {
-
+            Properties.Settings.Default.Port = value;
+            Properties.Settings.Default.Save();
+            Program.socketManager.Restart();
         }
     }
 }
