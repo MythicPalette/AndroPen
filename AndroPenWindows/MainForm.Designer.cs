@@ -63,10 +63,10 @@
             this.pressureCuve1.BackColor = Color.FromArgb( 64, 64, 64 );
             this.pressureCuve1.CurveColor = Color.FromArgb( 224, 224, 224 );
             this.pressureCuve1.GridColor = Color.DimGray;
-            this.pressureCuve1.Location = new Point( 380, 81 );
+            this.pressureCuve1.Location = new Point( 320, 81 );
             this.pressureCuve1.Name = "pressureCuve1";
             this.pressureCuve1.NodeColor = Color.FromArgb( 255, 128, 128 );
-            this.pressureCuve1.Size = new Size( 128, 128 );
+            this.pressureCuve1.Size = new Size( 188, 128 );
             this.pressureCuve1.TabIndex = 9;
             this.pressureCuve1.Text = "pressureCuve1";
             // 
@@ -102,7 +102,7 @@
             this.tableLayoutPanel1.RowStyles.Add( new RowStyle( SizeType.Percent, 20F ) );
             this.tableLayoutPanel1.RowStyles.Add( new RowStyle( SizeType.Percent, 20F ) );
             this.tableLayoutPanel1.RowStyles.Add( new RowStyle( SizeType.Percent, 20F ) );
-            this.tableLayoutPanel1.Size = new Size( 362, 127 );
+            this.tableLayoutPanel1.Size = new Size( 302, 127 );
             this.tableLayoutPanel1.TabIndex = 13;
             // 
             // barInputPressure
@@ -112,7 +112,7 @@
             this.barInputPressure.ForeColor = Color.Plum;
             this.barInputPressure.Location = new Point( 103, 78 );
             this.barInputPressure.Name = "barInputPressure";
-            this.barInputPressure.Size = new Size( 256, 19 );
+            this.barInputPressure.Size = new Size( 196, 19 );
             this.barInputPressure.TabIndex = 16;
             this.barInputPressure.Text = "progressBar1";
             // 
@@ -165,7 +165,7 @@
             this.labelPrimary.Font = new Font( "Microsoft Sans Serif", 15.75F );
             this.labelPrimary.Location = new Point( 103, 0 );
             this.labelPrimary.Name = "labelPrimary";
-            this.labelPrimary.Size = new Size( 256, 25 );
+            this.labelPrimary.Size = new Size( 196, 25 );
             this.labelPrimary.TabIndex = 16;
             // 
             // labelOrigin
@@ -175,7 +175,7 @@
             this.labelOrigin.Font = new Font( "Microsoft Sans Serif", 15.75F );
             this.labelOrigin.Location = new Point( 103, 25 );
             this.labelOrigin.Name = "labelOrigin";
-            this.labelOrigin.Size = new Size( 256, 25 );
+            this.labelOrigin.Size = new Size( 196, 25 );
             this.labelOrigin.TabIndex = 17;
             // 
             // labelResolution
@@ -185,7 +185,7 @@
             this.labelResolution.Font = new Font( "Microsoft Sans Serif", 15.75F );
             this.labelResolution.Location = new Point( 103, 50 );
             this.labelResolution.Name = "labelResolution";
-            this.labelResolution.Size = new Size( 256, 25 );
+            this.labelResolution.Size = new Size( 196, 25 );
             this.labelResolution.TabIndex = 18;
             // 
             // barOutputPressure
@@ -195,7 +195,7 @@
             this.barOutputPressure.ForeColor = Color.Plum;
             this.barOutputPressure.Location = new Point( 103, 103 );
             this.barOutputPressure.Name = "barOutputPressure";
-            this.barOutputPressure.Size = new Size( 256, 21 );
+            this.barOutputPressure.Size = new Size( 196, 21 );
             this.barOutputPressure.TabIndex = 19;
             this.barOutputPressure.Text = "progressBar1";
             // 
@@ -223,7 +223,7 @@
             this.AutoScaleDimensions = new SizeF( 7F, 15F );
             this.AutoScaleMode = AutoScaleMode.Font;
             this.BackColor = Color.FromArgb( 28, 28, 28 );
-            this.ClientSize = new Size( 518, 224 );
+            this.ClientSize = new Size( 518, 332 );
             this.Controls.Add( this.label5 );
             this.Controls.Add( this.PortInput );
             this.Controls.Add( this.tableLayoutPanel1 );

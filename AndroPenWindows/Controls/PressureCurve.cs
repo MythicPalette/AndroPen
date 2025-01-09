@@ -8,7 +8,7 @@ public class PressureCurve : Control
 {
     public event EventHandler? PressureCurveChanged;
 
-    private const int GRID_SIZE = 5;
+    private const int GRID_SIZE = 4;
     private int draggedPoint = -1; // -1: None, 1: Point1, 2: Point2, 3: Point3
 
     /// <summary>
@@ -31,6 +31,14 @@ public class PressureCurve : Control
     [Browsable( true )]
     [DesignerSerializationVisibility( DesignerSerializationVisibility.Visible )]
     public Color GridColor { get; set; }
+
+    /// <summary>
+    /// The distance in percentage from the center that the pin will snap to.
+    /// </summary>
+    [Browsable( true )]
+    [DesignerSerializationVisibility( DesignerSerializationVisibility.Visible )]
+    public float GridSnapRange { get; set; } = 0.05f;
+
 
     /// <summary>
     /// Default constructor.
@@ -203,19 +211,70 @@ public class PressureCurve : Control
         switch( this.draggedPoint )
         {
             case 1:
+                mousePoint = ValidateStartPoint( mousePoint );
                 Settings.ActivationThreshold = mousePoint.X;
                 Settings.InitialValue = mousePoint.Y;
                 break;
             case 2:
+                mousePoint = ValidateCenterPoint( mousePoint );
                 Settings.Softness = mousePoint;
                 break;
             case 3:
+                mousePoint = ValidateEndPoint( mousePoint );
                 Settings.MaxEffectiveInput = mousePoint.X;
                 Settings.MaxOutput = mousePoint.Y;
                 break;
         }
 
         Invalidate(); // Redraw to show the updated positions
+    }
+
+    protected virtual PointF DoSnap( PointF point, PointF snap )
+    {
+        if(
+            point.X < snap.X + this.GridSnapRange
+            && point.X > snap.X - this.GridSnapRange
+            && point.Y < snap.Y + this.GridSnapRange
+            && point.Y > snap.Y - this.GridSnapRange )
+            point = snap;
+        return point;
+    }
+
+    protected virtual PointF ValidateStartPoint( PointF point )
+    {
+        if( point.X > point.Y )
+            point.Y = 0f;
+        else
+            point.X = 0f;
+
+        // Never allow the curve to get backwards.
+        if( point.X >= Settings.MaxEffectiveInput - 0.1f )
+            point.X = Settings.MaxEffectiveInput - 0.1f;
+        if( point.Y >= Settings.MaxOutput - 0.1f )
+            point.Y = Settings.MaxOutput - 0.1f;
+
+        // Run snapping and return the value.
+        return DoSnap( point, new( 0, 0 ) );
+    }
+
+    protected virtual PointF ValidateCenterPoint( PointF point ) =>
+        // Run snapping and return the value.
+        DoSnap( point, new( 0.5f, 0.5f ) );
+
+    protected virtual PointF ValidateEndPoint( PointF point )
+    {
+        if( point.X < point.Y )
+            point.Y = 1f;
+        else
+            point.X = 1f;
+
+        // Never allow the curve to get backwards.
+        if( point.X <= Settings.ActivationThreshold + 0.1f )
+            point.X = Settings.ActivationThreshold + 0.1f;
+        if( point.Y <= Settings.InitialValue + 0.1f )
+            point.Y = Settings.InitialValue + 0.1f;
+
+        return DoSnap( point, new(1f,1f));
     }
 
     protected override void OnMouseUp( MouseEventArgs e )
