@@ -242,11 +242,6 @@ public class PressureCurve : Control
 
     protected virtual PointF ValidateStartPoint( PointF point )
     {
-        if( point.X > point.Y )
-            point.Y = 0f;
-        else
-            point.X = 0f;
-
         // Never allow the curve to get backwards.
         if( point.X >= Settings.MaxEffectiveInput - 0.1f )
             point.X = Settings.MaxEffectiveInput - 0.1f;
@@ -263,11 +258,6 @@ public class PressureCurve : Control
 
     protected virtual PointF ValidateEndPoint( PointF point )
     {
-        if( point.X < point.Y )
-            point.Y = 1f;
-        else
-            point.X = 1f;
-
         // Never allow the curve to get backwards.
         if( point.X <= Settings.ActivationThreshold + 0.1f )
             point.X = Settings.ActivationThreshold + 0.1f;
