@@ -11,6 +11,7 @@ internal class Client
     internal Client( Socket sock )
     {
         this._socket = sock;
+        this._socket.ReceiveTimeout = 1000;
         this._listenThread = new Thread( () => Worker( sock ) );
         this._listenThread.Start();
     }
@@ -62,8 +63,12 @@ internal class Client
             }
             catch( SocketException se )
             {
-                Logging.Error( se.ToString() );
-                return;
+                // A timeout is normal every second.
+                if( se.SocketErrorCode != SocketError.TimedOut )
+                {
+                    Logging.Error( se.ToString() );
+                    return;
+                }
             }
             catch( Exception ex )
             {
@@ -90,7 +95,7 @@ internal class Client
 
     internal void Dispose()
     {
-        this._socket.Shutdown( SocketShutdown.Both );
+        this._socket.Close();
         this._socket.Dispose();
         this._listenThread.Join();
         this.Disposed?.Invoke( this, EventArgs.Empty );

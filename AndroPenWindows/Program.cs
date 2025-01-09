@@ -49,7 +49,7 @@ internal static class Program
             nIcon.Visible = false;
             nIcon.Dispose();
             mainForm.Close();
-            socketManager.Dispose();
+            socketManager.Shutdown();
             Application.Exit();
         } );
 

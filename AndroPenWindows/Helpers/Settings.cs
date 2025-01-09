@@ -67,4 +67,13 @@ internal static class Settings
             Properties.Settings.Default.Save();
         }
     }
+
+    internal static int Port
+    {
+        get => Properties.Settings.Default.Port;
+        set
+        {
+
+        }
+    }
 }

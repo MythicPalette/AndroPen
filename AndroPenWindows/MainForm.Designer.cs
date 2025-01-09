@@ -42,10 +42,10 @@
             this.labelPrimary = new Label();
             this.labelOrigin = new Label();
             this.labelResolution = new Label();
-            this.numericUpDown1 = new NumericUpDown();
+            this.PortInput = new NumericUpDown();
             this.label5 = new Label();
             this.tableLayoutPanel1.SuspendLayout();
-            ( (System.ComponentModel.ISupportInitialize)this.numericUpDown1 ).BeginInit();
+            ( (System.ComponentModel.ISupportInitialize)this.PortInput ).BeginInit();
             SuspendLayout();
             // 
             // barOutputPressure
@@ -54,7 +54,7 @@
             this.barOutputPressure.Location = new Point( 103, 103 );
             this.barOutputPressure.Maximum = 8096;
             this.barOutputPressure.Name = "barOutputPressure";
-            this.barOutputPressure.Size = new Size( 256, 22 );
+            this.barOutputPressure.Size = new Size( 256, 21 );
             this.barOutputPressure.TabIndex = 4;
             // 
             // labelPressure
@@ -63,7 +63,7 @@
             this.labelPressure.Font = new Font( "Microsoft Sans Serif", 15.75F );
             this.labelPressure.Location = new Point( 3, 100 );
             this.labelPressure.Name = "labelPressure";
-            this.labelPressure.Size = new Size( 94, 28 );
+            this.labelPressure.Size = new Size( 94, 27 );
             this.labelPressure.TabIndex = 5;
             this.labelPressure.Text = "Output Pressure:";
             // 
@@ -72,7 +72,7 @@
             this.pressureCuve1.BackColor = Color.FromArgb( 64, 64, 64 );
             this.pressureCuve1.CurveColor = Color.FromArgb( 224, 224, 224 );
             this.pressureCuve1.GridColor = Color.DimGray;
-            this.pressureCuve1.Location = new Point( 380, 51 );
+            this.pressureCuve1.Location = new Point( 380, 81 );
             this.pressureCuve1.Name = "pressureCuve1";
             this.pressureCuve1.NodeColor = Color.FromArgb( 255, 128, 128 );
             this.pressureCuve1.Size = new Size( 128, 128 );
@@ -83,9 +83,9 @@
             // 
             this.ScreenSelection.Font = new Font( "Microsoft Sans Serif", 15.75F );
             this.ScreenSelection.FormattingEnabled = true;
-            this.ScreenSelection.Location = new Point( 12, 12 );
+            this.ScreenSelection.Location = new Point( 12, 43 );
             this.ScreenSelection.Name = "ScreenSelection";
-            this.ScreenSelection.Size = new Size( 312, 33 );
+            this.ScreenSelection.Size = new Size( 302, 33 );
             this.ScreenSelection.TabIndex = 10;
             // 
             // tableLayoutPanel1
@@ -103,7 +103,7 @@
             this.tableLayoutPanel1.Controls.Add( this.labelPrimary, 1, 0 );
             this.tableLayoutPanel1.Controls.Add( this.labelOrigin, 1, 1 );
             this.tableLayoutPanel1.Controls.Add( this.labelResolution, 1, 2 );
-            this.tableLayoutPanel1.Location = new Point( 12, 51 );
+            this.tableLayoutPanel1.Location = new Point( 12, 82 );
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 5;
             this.tableLayoutPanel1.RowStyles.Add( new RowStyle( SizeType.Percent, 20F ) );
@@ -111,7 +111,7 @@
             this.tableLayoutPanel1.RowStyles.Add( new RowStyle( SizeType.Percent, 20F ) );
             this.tableLayoutPanel1.RowStyles.Add( new RowStyle( SizeType.Percent, 20F ) );
             this.tableLayoutPanel1.RowStyles.Add( new RowStyle( SizeType.Percent, 20F ) );
-            this.tableLayoutPanel1.Size = new Size( 362, 128 );
+            this.tableLayoutPanel1.Size = new Size( 362, 127 );
             this.tableLayoutPanel1.TabIndex = 13;
             // 
             // barInputPressure
@@ -174,7 +174,6 @@
             this.labelPrimary.Name = "labelPrimary";
             this.labelPrimary.Size = new Size( 256, 25 );
             this.labelPrimary.TabIndex = 16;
-            this.labelPrimary.Text = "label5";
             // 
             // labelOrigin
             // 
@@ -185,7 +184,6 @@
             this.labelOrigin.Name = "labelOrigin";
             this.labelOrigin.Size = new Size( 256, 25 );
             this.labelOrigin.TabIndex = 17;
-            this.labelOrigin.Text = "label5";
             // 
             // labelResolution
             // 
@@ -196,21 +194,20 @@
             this.labelResolution.Name = "labelResolution";
             this.labelResolution.Size = new Size( 256, 25 );
             this.labelResolution.TabIndex = 18;
-            this.labelResolution.Text = "label6";
             // 
-            // numericUpDown1
+            // PortInput
             // 
-            this.numericUpDown1.Font = new Font( "Microsoft Sans Serif", 15.75F );
-            this.numericUpDown1.Location = new Point( 388, 13 );
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new Size( 120, 31 );
-            this.numericUpDown1.TabIndex = 14;
+            this.PortInput.Font = new Font( "Microsoft Sans Serif", 15.75F );
+            this.PortInput.Location = new Point( 380, 44 );
+            this.PortInput.Name = "PortInput";
+            this.PortInput.Size = new Size( 128, 31 );
+            this.PortInput.TabIndex = 14;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new Font( "Microsoft Sans Serif", 15.75F );
-            this.label5.Location = new Point( 330, 15 );
+            this.label5.Location = new Point( 320, 46 );
             this.label5.Name = "label5";
             this.label5.Size = new Size( 51, 25 );
             this.label5.TabIndex = 15;
@@ -221,20 +218,20 @@
             this.AutoScaleDimensions = new SizeF( 7F, 15F );
             this.AutoScaleMode = AutoScaleMode.Font;
             this.BackColor = Color.FromArgb( 28, 28, 28 );
-            this.ClientSize = new Size( 518, 195 );
+            this.ClientSize = new Size( 518, 221 );
             this.Controls.Add( this.label5 );
-            this.Controls.Add( this.numericUpDown1 );
+            this.Controls.Add( this.PortInput );
             this.Controls.Add( this.tableLayoutPanel1 );
             this.Controls.Add( this.ScreenSelection );
             this.Controls.Add( this.pressureCuve1 );
             this.ForeColor = SystemColors.ButtonFace;
-            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            this.FormBorderStyle = FormBorderStyle.None;
             this.Icon = (Icon)resources.GetObject( "$this.Icon" );
             this.Name = "MainForm";
             this.Text = "AndroPen";
             this.tableLayoutPanel1.ResumeLayout( false );
             this.tableLayoutPanel1.PerformLayout();
-            ( (System.ComponentModel.ISupportInitialize)this.numericUpDown1 ).EndInit();
+            ( (System.ComponentModel.ISupportInitialize)this.PortInput ).EndInit();
             ResumeLayout( false );
             PerformLayout();
         }
@@ -253,7 +250,7 @@
         private Label labelPrimary;
         private Label labelOrigin;
         private Label labelResolution;
-        private NumericUpDown numericUpDown1;
+        private NumericUpDown PortInput;
         private Label label5;
     }
 }

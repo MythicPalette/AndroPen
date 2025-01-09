@@ -5,29 +5,37 @@ namespace AndroPen.Helpers;
 
 internal class SocketManager
 {
-    protected int _port = 18998;
-    protected TcpListener _listener;
-
-    protected Thread _listenThread;
-
-    protected List<Client> _clients;
+    public bool IsConnected => _listener != null;
+    protected TcpListener? _listener;
+    protected Thread? _listenThread;
+    protected List<Client> _clients= [];
 
     protected bool _shutingDown = false;
 
     /// <summary>
-    /// Default constructor.
+    /// Start the listener and begin accepting clients.
     /// </summary>
-    internal SocketManager()
+    internal void Start()
     {
-        this._clients = [];
-        this._listener = new( IPAddress.Any, this._port );
+        // The listener has already be started.
+        if( this._listener != null )
+            return;
+
+        this._shutingDown = false;
+        this._listener = new( IPAddress.Any, Settings.Port );
         this._listenThread = new Thread( ListenWorker );
+        this._listenThread.Start();
     }
 
     /// <summary>
-    /// Start the listener and begin accepting clients.
+    /// Restart the listener and begin accepting clients again.
+    /// This is most important if the port setting is changed.
     /// </summary>
-    internal void Start() => this._listenThread.Start();
+    internal void Restart()
+    {
+        Shutdown();
+        Start();
+    }
 
     /// <summary>
     /// Accepts client connections and creates client workers.
@@ -36,6 +44,9 @@ internal class SocketManager
     {
         try
         {
+            if( this._listener == null )
+                return;
+
             this._listener.Start();
             Logging.Log( "Waiting for connection." );
             while( !this._shutingDown )
@@ -49,17 +60,20 @@ internal class SocketManager
         catch( Exception ex )
         {
             Logging.Error( ex.ToString() );
+            Shutdown();
         }
     }
 
     /// <summary>
     /// Shutdown the socket manager and dispose of the listener.
     /// </summary>
-    public void Dispose()
+    public void Shutdown()
     {
-        this._listener.Stop();
-        this._listener.Dispose();
         this._shutingDown = true;
-        this._listenThread.Join();
+        this._listener?.Stop();
+        this._listener?.Dispose();
+        this._listenThread?.Join();
+        this._listener = null;
+        this._listenThread = null;
     }
 }
