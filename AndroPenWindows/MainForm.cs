@@ -5,17 +5,47 @@ namespace AndroPen;
 
 public partial class MainForm : Form
 {
-    private const int CROSS_SIZE = 16; // This
+    /// <summary>
+    /// This is the size of the X on the close button
+    /// </summary>
+    private const int CROSS_SIZE = 16; 
+
+    /// <summary>
+    /// This is the height of the form header.
+    /// </summary>
     private const int HEADER_HEIGHT = 32;
 
-    private Color _headColor = Color.FromArgb(24, 24, 24);
-    protected Rectangle HeaderBox => new( 0, 0, this.Width, HEADER_HEIGHT );
+    /// <summary>
+    /// This is the background color of the header section
+    /// </summary>
+    private Color _headColor = Color.FromArgb(16, 16, 16);
 
+    /// <summary>
+    /// This is the bounding box for the header
+    /// </summary>
+    protected Rectangle GetHeaderBox() => new( 0, 0, this.Width, HEADER_HEIGHT );
+
+    /// <summary>
+    /// This is the color of the close button when the mouse is hovering. We only need
+    /// the hover color because the button has no color unless moused over.
+    /// </summary>
     private Color _buttonHoverColor = Color.FromArgb(64, 64,64);
-    public Color ButtonHoverColor { get; set; }
-    protected Rectangle CloseBox => new( this.Width - 48, 0, 48, 32 );
 
+    /// <summary>
+    /// This is the bounding box for close button.
+    /// </summary>
+    protected Rectangle GetCloseBox() => new( this.Width - 48, 0, 48, 32 );
+
+    /// <summary>
+    /// When not dragging, this will be null, serving the dual purpose of tracking the
+    /// drag offset of the mouse and marking the drag state of the form.
+    /// </summary>
     private Point? _mouseOffset;
+
+    /// <summary>
+    /// This just wraps a condition that is used several times while checking the drag state.
+    /// </summary>
+    private bool IsDragging() => this._mouseOffset is not null;
 
     public MainForm()
     {
@@ -79,11 +109,11 @@ public partial class MainForm : Form
 
         // Draw the header bar
         Brush headBrush = new SolidBrush(_headColor);
-        e.Graphics.FillRectangle( headBrush, this.HeaderBox );
-        e.Graphics.DrawLine( new( Color.Plum, 2 ), new( 0, this.HEADER_HEIGHT + 1 ), new( this.Width, this.HEADER_HEIGHT + 1 ) );
+        e.Graphics.FillRectangle( headBrush, this.GetHeaderBox() );
+        e.Graphics.DrawLine( new( Color.Plum, 2 ), new( 0, HEADER_HEIGHT + 1 ), new( this.Width, HEADER_HEIGHT + 1 ) );
 
         if( this.Icon != null )
-            e.Graphics.DrawIcon( this.Icon, new( 4, 4, this.HEADER_HEIGHT - 8, this.HEADER_HEIGHT - 8 ) );
+            e.Graphics.DrawIcon( this.Icon, new( 4, 4, HEADER_HEIGHT - 8, HEADER_HEIGHT - 8 ) );
 
         // Draw the title
         Font f = new(this.Font.FontFamily, 16f, FontStyle.Regular);
@@ -98,22 +128,24 @@ public partial class MainForm : Form
 
     protected void DrawCloseButton(Graphics g)
     {
+        Rectangle closeBox = GetCloseBox();
+
         /*
          * The close button has a transparent background so only draw the rectangle for the close button
          * if the mouse is currently over it. This will give the highlighted effect.
          */
-        if( this.CloseBox.Contains( PointToClient( Cursor.Position ) ) )
+        if( closeBox.Contains( PointToClient( Cursor.Position ) ) )
         {
             Brush closeBrush = new SolidBrush(this._buttonHoverColor);
-            g.FillRectangle( closeBrush, this.CloseBox );
+            g.FillRectangle( closeBrush, closeBox );
         }
 
         /*
          * To draw the X on the button accurately we need
          * the center of the button first.
          */
-        int centerX = this.CloseBox.Width / 2 + this.CloseBox.X;
-        int centerY = this.CloseBox.Height / 2 + this.CloseBox.Y;
+        int centerX = closeBox.Width / 2 + closeBox.X;
+        int centerY = closeBox.Height / 2 + closeBox.Y;
 
         // halfSize is half the width of the X, required for calculating corners
         int halfSize = CROSS_SIZE / 2;
@@ -135,7 +167,7 @@ public partial class MainForm : Form
         if( e.Button == MouseButtons.Left )
         {
             // With a left click, check if the mouse is inside the header
-            if( this.HeaderBox.Contains( e.Location ) )
+            if( this.GetHeaderBox().Contains( e.Location ) )
             {
                 // With the mouse in the header, capture the offset from the form for dragging
                 this._mouseOffset = e.Location;
@@ -152,11 +184,11 @@ public partial class MainForm : Form
          * If the mouse is moving around inside the header and we're not currently dragging the form
          * redraw the form for button highlighting.
          */
-        if( this.HeaderBox.Contains( e.Location ) && this._mouseOffset is null )
+        if( this.GetHeaderBox().Contains( e.Location ) && this.IsDragging() )
             Invalidate();
 
         // If not dragging then send the base event and exit.
-        if( this._mouseOffset is null )
+        if( !this.IsDragging() )
         {
             base.OnMouseMove( e );
             return;
@@ -183,7 +215,7 @@ public partial class MainForm : Form
     protected override void OnMouseClick( MouseEventArgs e )
     {
         // Check if the close button is clicked
-        if( this.CloseBox.Contains( e.Location ) )
+        if( GetCloseBox().Contains( e.Location ) )
         {
             Hide();
             return;
