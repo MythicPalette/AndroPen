@@ -5,11 +5,11 @@ namespace AndroPen;
 
 public partial class MainForm : Form
 {
-    private const int CROSS_SIZE = 16;
+    private const int CROSS_SIZE = 16; // This
+    private const int HEADER_HEIGHT = 32;
 
     private Color _headColor = Color.FromArgb(24, 24, 24);
-    protected int HeaderHeight { get; set; } = 32;
-    protected Rectangle HeaderBox => new( 0, 0, this.Width, this.HeaderHeight );
+    protected Rectangle HeaderBox => new( 0, 0, this.Width, HEADER_HEIGHT );
 
     private Color _buttonHoverColor = Color.FromArgb(64, 64,64);
     public Color ButtonHoverColor { get; set; }
@@ -80,10 +80,10 @@ public partial class MainForm : Form
         // Draw the header bar
         Brush headBrush = new SolidBrush(_headColor);
         e.Graphics.FillRectangle( headBrush, this.HeaderBox );
-        e.Graphics.DrawLine( new( Color.Plum, 2 ), new( 0, this.HeaderHeight + 1 ), new( this.Width, this.HeaderHeight + 1 ) );
+        e.Graphics.DrawLine( new( Color.Plum, 2 ), new( 0, this.HEADER_HEIGHT + 1 ), new( this.Width, this.HEADER_HEIGHT + 1 ) );
 
         if( this.Icon != null )
-            e.Graphics.DrawIcon( this.Icon, new( 4, 4, this.HeaderHeight - 8, this.HeaderHeight - 8 ) );
+            e.Graphics.DrawIcon( this.Icon, new( 4, 4, this.HEADER_HEIGHT - 8, this.HEADER_HEIGHT - 8 ) );
 
         // Draw the title
         Font f = new(this.Font.FontFamily, 16f, FontStyle.Regular);
