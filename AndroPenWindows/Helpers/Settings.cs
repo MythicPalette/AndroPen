@@ -1,6 +1,4 @@
-﻿using AndroPen.Data;
-
-namespace AndroPen.Helpers;
+﻿namespace AndroPen.Helpers;
 
 internal static class Settings
 {

@@ -4,6 +4,9 @@
     <Compile Update="Controls\PressureCurve.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Update="Controls\ProgressBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Update="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

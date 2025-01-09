@@ -1,9 +1,5 @@
-﻿using System.Diagnostics.PerformanceData;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using AndroPen.Data;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace AndroPen.Helpers;
 

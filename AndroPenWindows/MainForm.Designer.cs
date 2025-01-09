@@ -29,12 +29,11 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            this.barOutputPressure = new ProgressBar();
             this.labelPressure = new Label();
             this.pressureCuve1 = new Controls.PressureCurve();
             this.ScreenSelection = new ComboBox();
             this.tableLayoutPanel1 = new TableLayoutPanel();
-            this.barInputPressure = new ProgressBar();
+            this.barInputPressure = new Controls.ProgressBar();
             this.label2 = new Label();
             this.label4 = new Label();
             this.label1 = new Label();
@@ -42,20 +41,12 @@
             this.labelPrimary = new Label();
             this.labelOrigin = new Label();
             this.labelResolution = new Label();
+            this.barOutputPressure = new Controls.ProgressBar();
             this.PortInput = new NumericUpDown();
             this.label5 = new Label();
             this.tableLayoutPanel1.SuspendLayout();
             ( (System.ComponentModel.ISupportInitialize)this.PortInput ).BeginInit();
             SuspendLayout();
-            // 
-            // barOutputPressure
-            // 
-            this.barOutputPressure.Dock = DockStyle.Fill;
-            this.barOutputPressure.Location = new Point( 103, 103 );
-            this.barOutputPressure.Maximum = 8096;
-            this.barOutputPressure.Name = "barOutputPressure";
-            this.barOutputPressure.Size = new Size( 256, 21 );
-            this.barOutputPressure.TabIndex = 4;
             // 
             // labelPressure
             // 
@@ -96,13 +87,13 @@
             this.tableLayoutPanel1.Controls.Add( this.barInputPressure, 1, 3 );
             this.tableLayoutPanel1.Controls.Add( this.label2, 0, 0 );
             this.tableLayoutPanel1.Controls.Add( this.label4, 0, 3 );
-            this.tableLayoutPanel1.Controls.Add( this.barOutputPressure, 1, 4 );
             this.tableLayoutPanel1.Controls.Add( this.label1, 0, 1 );
             this.tableLayoutPanel1.Controls.Add( this.label3, 0, 2 );
             this.tableLayoutPanel1.Controls.Add( this.labelPressure, 0, 4 );
             this.tableLayoutPanel1.Controls.Add( this.labelPrimary, 1, 0 );
             this.tableLayoutPanel1.Controls.Add( this.labelOrigin, 1, 1 );
             this.tableLayoutPanel1.Controls.Add( this.labelResolution, 1, 2 );
+            this.tableLayoutPanel1.Controls.Add( this.barOutputPressure, 1, 4 );
             this.tableLayoutPanel1.Location = new Point( 12, 82 );
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 5;
@@ -116,12 +107,14 @@
             // 
             // barInputPressure
             // 
+            this.barInputPressure.BackColor = Color.FromArgb( 64, 64, 64 );
             this.barInputPressure.Dock = DockStyle.Fill;
+            this.barInputPressure.ForeColor = Color.Plum;
             this.barInputPressure.Location = new Point( 103, 78 );
-            this.barInputPressure.Maximum = 8096;
             this.barInputPressure.Name = "barInputPressure";
             this.barInputPressure.Size = new Size( 256, 19 );
-            this.barInputPressure.TabIndex = 15;
+            this.barInputPressure.TabIndex = 16;
+            this.barInputPressure.Text = "progressBar1";
             // 
             // label2
             // 
@@ -195,6 +188,17 @@
             this.labelResolution.Size = new Size( 256, 25 );
             this.labelResolution.TabIndex = 18;
             // 
+            // barOutputPressure
+            // 
+            this.barOutputPressure.BackColor = Color.FromArgb( 64, 64, 64 );
+            this.barOutputPressure.Dock = DockStyle.Fill;
+            this.barOutputPressure.ForeColor = Color.Plum;
+            this.barOutputPressure.Location = new Point( 103, 103 );
+            this.barOutputPressure.Name = "barOutputPressure";
+            this.barOutputPressure.Size = new Size( 256, 21 );
+            this.barOutputPressure.TabIndex = 19;
+            this.barOutputPressure.Text = "progressBar1";
+            // 
             // PortInput
             // 
             this.PortInput.Font = new Font( "Microsoft Sans Serif", 15.75F );
@@ -218,7 +222,7 @@
             this.AutoScaleDimensions = new SizeF( 7F, 15F );
             this.AutoScaleMode = AutoScaleMode.Font;
             this.BackColor = Color.FromArgb( 28, 28, 28 );
-            this.ClientSize = new Size( 518, 221 );
+            this.ClientSize = new Size( 518, 224 );
             this.Controls.Add( this.label5 );
             this.Controls.Add( this.PortInput );
             this.Controls.Add( this.tableLayoutPanel1 );
@@ -237,7 +241,6 @@
         }
 
         #endregion
-        private ProgressBar barOutputPressure;
         private Label labelPressure;
         private Controls.PressureCurve pressureCuve1;
         private ComboBox ScreenSelection;
@@ -246,11 +249,12 @@
         private Label label1;
         private Label label3;
         private Label label4;
-        private ProgressBar barInputPressure;
         private Label labelPrimary;
         private Label labelOrigin;
         private Label labelResolution;
         private NumericUpDown PortInput;
         private Label label5;
+        private Controls.ProgressBar barInputPressure;
+        private Controls.ProgressBar barOutputPressure;
     }
 }

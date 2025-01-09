@@ -5,6 +5,8 @@ namespace AndroPen;
 
 public partial class MainForm : Form
 {
+    private const int CROSS_SIZE = 16;
+
     private Color _headColor = Color.FromArgb(24, 24, 24);
     protected int HeaderHeight { get; set; } = 32;
     protected Rectangle HeaderBox => new( 0, 0, this.Width, this.HeaderHeight );
@@ -44,17 +46,8 @@ public partial class MainForm : Form
             return;
         }
 
-        this.barInputPressure.Value = Math.Clamp(
-                (int)( this.barInputPressure.Maximum * inPressure ),
-                0,
-                this.barInputPressure.Maximum
-            );
-
-        this.barOutputPressure.Value = Math.Clamp(
-                (int)( this.barOutputPressure.Maximum * outPressure ),
-                0,
-                this.barOutputPressure.Maximum
-            );
+        this.barInputPressure.Progress = inPressure;
+        this.barOutputPressure.Progress = outPressure;
 
     }
 
@@ -87,8 +80,9 @@ public partial class MainForm : Form
         // Draw the header bar
         Brush headBrush = new SolidBrush(_headColor);
         e.Graphics.FillRectangle( headBrush, this.HeaderBox );
+        e.Graphics.DrawLine( new( Color.Plum, 2 ), new( 0, this.HeaderHeight + 1 ), new( this.Width, this.HeaderHeight + 1 ) );
 
-        if ( this.Icon != null )
+        if( this.Icon != null )
             e.Graphics.DrawIcon( this.Icon, new( 4, 4, this.HeaderHeight - 8, this.HeaderHeight - 8 ) );
 
         // Draw the title
@@ -97,39 +91,53 @@ public partial class MainForm : Form
 
         // Draw the connection dot
         Brush connectionBrush = new SolidBrush( Program.socketManager.IsConnected ? Color.Green : Color.Red );
-        e.Graphics.FillEllipse( connectionBrush, new( 120, 4, 8, 8 ) );
+        e.Graphics.FillEllipse( connectionBrush, new( 124, 4, 8, 8 ) );
 
-        // Draw the close button
-        if( this.CloseBox.Contains( this.PointToClient(Cursor.Position) ) )
+        DrawCloseButton(e.Graphics);
+    }
+
+    protected void DrawCloseButton(Graphics g)
+    {
+        /*
+         * The close button has a transparent background so only draw the rectangle for the close button
+         * if the mouse is currently over it. This will give the highlighted effect.
+         */
+        if( this.CloseBox.Contains( PointToClient( Cursor.Position ) ) )
         {
             Brush closeBrush = new SolidBrush(this._buttonHoverColor);
-            e.Graphics.FillRectangle( closeBrush, this.CloseBox );
+            g.FillRectangle( closeBrush, this.CloseBox );
         }
 
-        int padding = (this.CloseBox.Width - this.HeaderHeight) / 2 ;
-        Point p1 = new(
-            this.CloseBox.X + padding*2,
-            this.CloseBox.Y + padding );
-        Point p2 = new(
-            this.CloseBox.X + this.HeaderHeight,
-            this.CloseBox.Y + this.HeaderHeight - padding );
-        e.Graphics.DrawLine( new( this.ForeColor, 2f ), p1, p2 );
+        /*
+         * To draw the X on the button accurately we need
+         * the center of the button first.
+         */
+        int centerX = this.CloseBox.Width / 2 + this.CloseBox.X;
+        int centerY = this.CloseBox.Height / 2 + this.CloseBox.Y;
 
-        Point p3 = new(
-            this.CloseBox.X + padding*2,
-            this.CloseBox.Y + this.HeaderHeight - padding );
-        Point p4 = new(
-            this.CloseBox.X + this.HeaderHeight,
-            this.CloseBox.Y + padding);
-        e.Graphics.DrawLine( new( this.ForeColor, 2f ), p3, p4 );
+        // halfSize is half the width of the X, required for calculating corners
+        int halfSize = CROSS_SIZE / 2;
+
+        // Calculate the four corners of the X
+        int xStart = centerX - halfSize;
+        int yStart = centerY - halfSize;
+        int xEnd = centerX + halfSize;
+        int yEnd = centerY + halfSize;
+
+        // Using the four points we calculated, draw the lines
+        Pen linePen = new( this.ForeColor, 2f );
+        g.DrawLine( linePen, xStart, yStart, xEnd, yEnd );
+        g.DrawLine( linePen, xStart, yEnd, xEnd, yStart );
     }
 
     protected override void OnMouseDown( MouseEventArgs e )
     {
         if( e.Button == MouseButtons.Left )
         {
-            if ( this.HeaderBox.Contains(e.Location) )
+            // With a left click, check if the mouse is inside the header
+            if( this.HeaderBox.Contains( e.Location ) )
             {
+                // With the mouse in the header, capture the offset from the form for dragging
                 this._mouseOffset = e.Location;
                 return;
             }
@@ -140,33 +148,59 @@ public partial class MainForm : Form
 
     protected override void OnMouseMove( MouseEventArgs e )
     {
-        if( this.HeaderBox.Contains( e.Location ) )
+        /*
+         * If the mouse is moving around inside the header and we're not currently dragging the form
+         * redraw the form for button highlighting.
+         */
+        if( this.HeaderBox.Contains( e.Location ) && this._mouseOffset is null )
             Invalidate();
-        if ( this._mouseOffset is null )
+
+        // If not dragging then send the base event and exit.
+        if( this._mouseOffset is null )
         {
-            if( this.CloseBox.Contains( e.Location ) )
             base.OnMouseMove( e );
             return;
         }
 
-        // Dragging the form
+        // Dragging the form so get the screen location of the mouse
         Point p = PointToScreen(e.Location);
+
+        // Offset the location by the mouse location
         p.X -= this._mouseOffset?.X ?? 0;
         p.Y -= this._mouseOffset?.Y ?? 0;
 
+        // Move the form to the offset location
         this.Location = p;
     }
 
     protected override void OnMouseUp( MouseEventArgs e )
     {
+        // On mouse up, make _mouseOffset null to stop dragging events.
         this._mouseOffset = null;
         base.OnMouseUp( e );
     }
 
     protected override void OnMouseClick( MouseEventArgs e )
     {
-        base.OnMouseClick( e );
+        // Check if the close button is clicked
         if( this.CloseBox.Contains( e.Location ) )
+        {
             Hide();
+            return;
+        }
+
+        // If not clicking the close button then fire the base event.
+        base.OnMouseClick( e );
+    }
+
+    protected override void OnMouseLeave( EventArgs e )
+    {
+        /*
+         * Run the base event and invalidate the form to redraw. This is important
+         * for when the mouse leaves the form while over the close button. Without
+         * this, the close button will stay highlighted.
+         */
+        base.OnMouseLeave( e );
+        Invalidate();
     }
 }

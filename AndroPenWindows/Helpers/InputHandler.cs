@@ -136,6 +136,8 @@ public class InputHandler
             Logging.Error( $"Pen input failed. Last error code: {errorCode}" );
             return;
         }
+        else
+            this.PenInput?.Invoke( new((int)rpi.PixelPosition.X, (int)rpi.PixelPosition.Y), rpi.Pressure, outPressure );
     }
 
     public static float GetPressureValue( float InputPressure )

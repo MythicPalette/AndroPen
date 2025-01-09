@@ -1,6 +1,3 @@
-using System.Runtime.InteropServices;
-using AndroPen.Controls;
-using AndroPen.Data;
 using AndroPen.Helpers;
 
 namespace AndroPen;
