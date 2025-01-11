@@ -12,8 +12,10 @@ internal class EventProcessor
     internal const int DRAW_AREA_ID = 0;
     internal static void ProcessEvent(RemoteEvent re)
     {
-        if ( re.Sender == DRAW_AREA_ID )
+        if( re.Sender == DRAW_AREA_ID )
             ProcessDrawArea( re );
+        else
+            ProcessSlider1( re );
     }
 
     protected static void ProcessDrawArea( RemoteEvent re )
@@ -29,7 +31,7 @@ internal class EventProcessor
 
     protected static void ProcessSlider1( RemoteEvent re )
     {
-
+        Console.WriteLine( "test" );
     }
 
     protected static void ProcessSlider2( RemoteEvent re )

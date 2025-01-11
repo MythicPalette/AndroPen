@@ -11,11 +11,7 @@ import com.mythicpalette.andropen.R
 import com.mythicpalette.andropen.data.EventType
 import com.mythicpalette.andropen.data.PointerInfo
 import com.mythicpalette.andropen.data.PointerType
-import com.mythicpalette.andropen.data.serialize
 import com.mythicpalette.andropen.helpers.Settings
-import com.mythicpalette.andropen.helpers.SocketHandler
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
 
 /**
  * TODO: document your custom view class.
@@ -35,23 +31,29 @@ class TouchInputView : View {
     private var penHovering: Boolean = false
     private var penTouching: Boolean = false
 
-    var onTouch: (MutableList<PointerInfo>) -> Unit = {}
-    var onHover: (PointerInfo) -> Unit = {}
+    private var acceptTouches: Boolean = true
+    private var acceptHover: Boolean = true
+
+    var onTouch: (Int, MutableList<PointerInfo>) -> Unit = {_, _ ->}
+    var onHover: (Int, PointerInfo) -> Unit = {_, _ ->}
 
     var borderCoverStyle: BorderCoverStyle = BorderCoverStyle.Shortest
     var borderCoverage: Float = 1f
 
+    var SenderId: Int = 0
+
     private var lastTouches: MutableList<PointerInfo> = mutableListOf()
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        init(attrs);
+        init(attrs)
     }
+
     constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(
         context,
         attrs,
         defStyle
     ) {
-        init(attrs);
+        init(attrs)
     }
 
     private fun init(attrs: AttributeSet) {
@@ -62,10 +64,13 @@ class TouchInputView : View {
             0, 0
         ).apply {
             try {
+                SenderId = getInt(R.styleable.TouchInputView_senderId, 0)
                 val strokeWidth = getDimension(R.styleable.TouchInputView_strokeWidth, 4f)
                 val borderColor = getColor(R.styleable.TouchInputView_borderColor, Color.WHITE)
                 borderCoverage = getFloat(R.styleable.TouchInputView_borderCoverage, 1f)
                 borderCoverStyle = BorderCoverStyle.fromValue(getInt(R.styleable.TouchInputView_borderCoverageStyle, 0))
+                acceptTouches = getBoolean(R.styleable.TouchInputView_acceptTouches, true)
+                acceptHover = getBoolean(R.styleable.TouchInputView_acceptHover, true)
 
                 borderPaint.apply {
                     color = borderColor
@@ -134,6 +139,8 @@ class TouchInputView : View {
     }
 
     override fun onTouchEvent(ev: MotionEvent): Boolean {
+        if ( !acceptTouches ) return true
+
         val infos: MutableList<PointerInfo> = mutableListOf()
         val action = ev.actionMasked
         val stamp = System.currentTimeMillis()
@@ -199,7 +206,8 @@ class TouchInputView : View {
             }
             infos.add(pi)
         }
-        this.onTouch(infos)
+        this.lastTouches = infos
+        this.onTouch(this.SenderId, infos)
         return true
         //
         //
@@ -218,6 +226,8 @@ class TouchInputView : View {
     }
 
     override fun onHoverEvent(ev: MotionEvent): Boolean {
+        if ( !acceptHover ) return true
+
         val pi = PointerInfo(
             pointerId = ev.getPointerId(0),
             eventType = EventType.HOVER_ENTER,
@@ -241,7 +251,9 @@ class TouchInputView : View {
             }
         }
 
-        this.onHover(pi);
+        this.lastTouches.clear()
+        this.lastTouches.add(pi)
+        this.onHover(this.SenderId, pi);
         return true
     }
 

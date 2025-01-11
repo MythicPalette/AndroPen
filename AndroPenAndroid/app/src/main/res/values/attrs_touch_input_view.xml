@@ -8,5 +8,8 @@
             <enum name="longest" value="1"/>
             <enum name="independent" value= "2"/>
         </attr>
+        <attr name="acceptTouches" format="boolean"/>
+        <attr name="acceptHover" format="boolean"/>
+        <attr name="senderId" format="integer"/>
     </declare-styleable>
 </resources>

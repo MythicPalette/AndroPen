@@ -46,7 +46,8 @@
             app:borderColor="@color/red"
             app:borderCoverage="0.5"
             app:borderCoverageStyle="shortest"
-            app:strokeWidth="2dp" />
+            app:strokeWidth="2dp"
+            app:senderId="0"/>
     </FrameLayout>
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -69,7 +70,8 @@
             app:borderColor="@color/red"
             app:borderCoverage="0.5"
             app:borderCoverageStyle="independent"
-            app:strokeWidth="2dp" />
+            app:strokeWidth="2dp"
+            app:senderId="1"/>
 
         <Space
             android:layout_width="match_parent"
@@ -84,6 +86,7 @@
             app:borderColor="@color/red"
             app:borderCoverage="0.5"
             app:borderCoverageStyle="independent"
-            app:strokeWidth="2dp" />
+            app:strokeWidth="2dp"
+            app:senderId="2"/>
     </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.constraintlayout.widget.ConstraintLayout>
