@@ -8,9 +8,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import com.mythicpalette.andropen.R
-import com.mythicpalette.andropen.data.EventType
 import com.mythicpalette.andropen.data.PointerInfo
-import com.mythicpalette.andropen.data.PointerType
 import com.mythicpalette.andropen.helpers.Settings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -171,7 +169,7 @@ class TouchInputView : View {
             }
 
             // Check if the input device is a pen or a finger
-            when (ev.getToolType(i)) {
+            when (pi.pointerType) {
                 MotionEvent.TOOL_TYPE_STYLUS -> {
                     when (action) {
                         MotionEvent.ACTION_DOWN -> penDown = true
@@ -223,24 +221,20 @@ class TouchInputView : View {
     override fun onHoverEvent(ev: MotionEvent): Boolean {
         val pi = PointerInfo(
             pointerId = ev.getPointerId(0),
-            eventType = EventType.HOVER_ENTER,
+            eventType = ev.actionMasked,
             x = ev.getX(0),
             y = ev.getY(0),
             pressure = 0f,
-            pointerType = PointerType.PEN,
+            pointerType = ev.getToolType(0),
             tiltX = ev.getAxisValue(MotionEvent.AXIS_TILT, 0),
             tiltY = ev.getAxisValue(MotionEvent.AXIS_TILT, 0),
             timeStamp = System.currentTimeMillis(),
             viewWidth = this.width,
             viewHeight = this.height
-        );
+        )
 
-        when (ev.action) {
-            MotionEvent.ACTION_HOVER_ENTER -> {
-                penHover = true
-                println("Hover Enter")
-            };
-            MotionEvent.ACTION_HOVER_MOVE -> pi.eventType = EventType.HOVER_MOVE
+        when (pi.eventType) {
+            MotionEvent.ACTION_HOVER_ENTER -> penHover = true
             MotionEvent.ACTION_HOVER_EXIT -> {
                 /*
                  Run the HOVER_EXIT event on a delay to prevent sending "HOVER_EXIT" event before
@@ -250,13 +244,15 @@ class TouchInputView : View {
                 CoroutineScope(Dispatchers.IO).launch{
                     delay(500)
                     if ( penDown ) return@launch
-                    penHover = false
-                    pi.eventType = EventType.HOVER_EXIT
 
+                    // Upon reaching this code, the pen has left range.
+                    penHover = false
                     lastTouches.clear()
                     lastTouches.add(pi)
                     onHover(SenderId, pi);
                 }
+
+                // Return from here to prevent following the normal flow.
                 return true
             }
         }
