@@ -5,6 +5,6 @@
         <attr name="borderCoverage"/>
         <attr name="borderCoverageStyle"/>
         <attr name="senderId"/>
-        <attr name="sensitivity" format="integer"/>
+        <attr name="sensitivity" format="float"/>
     </declare-styleable>
 </resources>

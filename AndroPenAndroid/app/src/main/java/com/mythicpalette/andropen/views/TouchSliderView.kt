@@ -31,7 +31,7 @@ class TouchSliderView : View {
      Move Sensitivity is used to control how frequently move events passed. This is
      to ensure that touch input views used like sliders
      */
-    private var sensitivity: Int = 1
+    private var sensitivity: Float = 0.1f
 
     private var orientation: Orientation = Orientation.Vertical
 
@@ -79,7 +79,7 @@ class TouchSliderView : View {
             0, 0
         ).apply {
             try {
-                sensitivity = getInt(R.styleable.TouchSliderView_sensitivity, 1)
+                sensitivity = getFloat(R.styleable.TouchSliderView_sensitivity, 0.1f)
             } finally {
                 recycle()
             }
@@ -175,7 +175,7 @@ class TouchSliderView : View {
                     if ( evPoint == null ) return true
 
                     // Verify we have travelled the requisite vertical distance for the sensitivity
-                    if ( abs(evPoint.y - ev.y) < this.sensitivity )
+                    if ( abs(evPoint.y - ev.y) < (this.height * this.sensitivity) )
                         return true // Return true to prevent sending
 
                     /*
