@@ -13,7 +13,7 @@ data class PointerInfo(
     var tiltX: Float = 0f, // Tilt in X direction for pen input
     var tiltY: Float = 0f, // Tilt in Y direction for pen input
     var timeStamp: Long, // Time of the event (milliseconds)
-    var pointerType: PointerType = PointerType.PEN, // Type of pointer: PEN, TOUCH, etc.
+    var pointerType: Int = MotionEvent.TOOL_TYPE_STYLUS, // Type of pointer: PEN, TOUCH, etc.
     var velocityX: Float = 0f, // Velocity of movement along the X axis
     var velocityY: Float = 0f,  // Velocity of movement along the Y axis
     var viewWidth: Int = 0,
@@ -36,7 +36,7 @@ fun PointerInfo.serialize(): ByteArray {
     buffer.putFloat(tiltX)
     buffer.putFloat(tiltY)
     buffer.putLong(timeStamp)
-    buffer.putInt(pointerType.ordinal)
+    buffer.putInt(pointerType)
     buffer.putFloat(velocityX)
     buffer.putFloat(velocityY)
     buffer.putInt(viewWidth)
@@ -44,8 +44,4 @@ fun PointerInfo.serialize(): ByteArray {
 
     // Return the byte array
     return buffer.array()
-}
-
-enum class PointerType {
-    PEN, TOUCH, FINGER
 }

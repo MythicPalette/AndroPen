@@ -4,27 +4,26 @@
 /// Enumerable for determining the type of event being sent from
 /// the Android device.
 /// </summary>
-public enum RemoteEventType
+public enum AndroidEventType
 {
-    Down = 0x00000000,
-    Up = 0x00000001,
-    Move = 0x00000002,
+    Down        = 0x00000000,
+    Up          = 0x00000001,
+    Move        = 0x00000002,
     PointerDown = 0x00000005,
-    PointerUp = 0x00000006,
-    HoverMove = 0x00000007,
-    HoverEnter = 0x00000009,
-    HoverExit = 0x0000000a
+    PointerUp   = 0x00000006,
+    HoverMove   = 0x00000007,
+    HoverEnter  = 0x00000009,
+    HoverExit   = 0x0000000a
 }
 
 /// <summary>
 /// Enumerable for determining the type of pointer that created
 /// the event on the Android Device
 /// </summary>
-public enum RemotePointerType
+public enum AndroidToolType
 {
-    Pen,
-    Touch,
-    Finger
+    Finger = 0x00000001,
+    Stylus = 0x00000002
 }
 
 /// <summary>
@@ -49,7 +48,7 @@ public class RemotePointerInfo
     /// <summary>
     /// The type of event that was triggered on the remote device. 
     /// </summary>
-    public RemoteEventType EvType { get; set; }
+    public AndroidEventType EvType { get; set; }
 
     /// <summary>
     /// The x/y coordinates of where on the device the event occured.
@@ -59,7 +58,7 @@ public class RemotePointerInfo
     public float Pressure { get; set; }
     public PointF Tilt { get; set; }
     public long TimeStamp { get; set; }
-    public RemotePointerType PtrType { get; set; }
+    public AndroidToolType PtrType { get; set; }
     public PointF Velocity { get; set; }
 
     public Size Size {  get; set; }
@@ -79,7 +78,7 @@ public class RemotePointerInfo
         idx += sizeof( int );
 
         // Get the event type and cast it to RemoteEventType
-        pi.EvType = (RemoteEventType)BitConverter.ToInt32( data, idx );
+        pi.EvType = (AndroidEventType)BitConverter.ToInt32( data, idx );
         idx += sizeof( int );
 
         // Get the X and Y values for the PixelPosition
@@ -111,7 +110,7 @@ public class RemotePointerInfo
         idx += sizeof( long );
 
         // Get the type of pointer that triggered the event
-        pi.PtrType = (RemotePointerType)BitConverter.ToInt32( data, idx );
+        pi.PtrType = (AndroidToolType)BitConverter.ToInt32( data, idx );
         idx += sizeof( int );
 
         // Get the X and Y velocity values of the movement.

@@ -43,7 +43,7 @@ internal class Client
                     byte[] data = Read( RemotePointerInfo.BYTE_LENGTH );
                     RemotePointerInfo rpi = RemotePointerInfo.DeserializePointerInfo( data );
 
-                    if ( rpi.PtrType == RemotePointerType.Pen ) remoteEvent.Pen = rpi;
+                    if ( rpi.PtrType == AndroidToolType.Stylus ) remoteEvent.Pen = rpi;
                     else remoteEvent.Touches.Add( rpi );
                 }
                 EventProcessor.ProcessEvent( remoteEvent );

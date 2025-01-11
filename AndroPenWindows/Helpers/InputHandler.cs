@@ -25,10 +25,10 @@ public class InputHandler
         for( int i = 0; i < rpis.Length; i++ )// (RemotePointerInfo rp in rpis)
         {
             PointerFlags pointerFlags;
-            if( rpis[i].EvType is RemoteEventType.Down or RemoteEventType.PointerDown )
+            if( rpis[i].EvType is AndroidEventType.Down or AndroidEventType.PointerDown )
                 pointerFlags = PointerFlags.Down | PointerFlags.InRange | PointerFlags.InContact;
 
-            else if( rpis[i].EvType is RemoteEventType.Move )
+            else if( rpis[i].EvType is AndroidEventType.Move )
                 pointerFlags = PointerFlags.Update | PointerFlags.InRange | PointerFlags.InContact;
 
             else
@@ -82,19 +82,19 @@ public class InputHandler
         PointerFlags pFlags = PointerFlags.None;
 
         // If the pointer has just gone down
-        if( rpi.EvType is RemoteEventType.Down or RemoteEventType.PointerDown )
+        if( rpi.EvType is AndroidEventType.Down or AndroidEventType.PointerDown )
             pFlags = PointerFlags.Down | PointerFlags.InRange | PointerFlags.InContact;
 
         // The pointer is moving across the surface.
-        else if( rpi.EvType is RemoteEventType.Move )
+        else if( rpi.EvType is AndroidEventType.Move )
             pFlags = PointerFlags.Update | PointerFlags.InRange | PointerFlags.InContact;
 
         // On Hover enter it is in range but not down or in contact
-        else if( rpi.EvType is RemoteEventType.HoverEnter )
+        else if( rpi.EvType is AndroidEventType.HoverEnter )
             pFlags |= PointerFlags.InRange;
 
         // Update the position of the cursor 
-        else if( rpi.EvType is RemoteEventType.HoverMove )
+        else if( rpi.EvType is AndroidEventType.HoverMove )
             pFlags |= PointerFlags.Update | PointerFlags.InRange;
 
         // This is when it leaves hover and/or stops touching.

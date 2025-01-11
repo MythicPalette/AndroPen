@@ -150,6 +150,8 @@ class TouchInputView : View {
         for (i in 0 until ev.pointerCount) {
             val pi = PointerInfo(
                 pointerId = ev.getPointerId(i),          // Pointer ID
+                eventType = action,
+                pointerType = ev.getToolType(i),
                 x = ev.getX(i), y = ev.getY(i), // Coordinates
                 timeStamp = stamp,              // Timestamp
                 pressure = ev.getPressure(i),
@@ -172,25 +174,10 @@ class TouchInputView : View {
             when (ev.getToolType(i)) {
                 MotionEvent.TOOL_TYPE_STYLUS -> {
                     when (action) {
-                        MotionEvent.ACTION_DOWN -> {
-                            pi.eventType = EventType.DOWN     // Event Type
-                            penDown = true
-                            println("Pen Down")
-                        }
-                        MotionEvent.ACTION_POINTER_DOWN -> {
-                            pi.eventType = EventType.POINTER_DOWN     // Event Type
-                            penDown = true
-                            println("Pen Down")
-                        }
-                        MotionEvent.ACTION_UP -> {
-                            pi.eventType = EventType.UP
-                            penDown = false
-                            println("Pen Up")
-                        }
-                        MotionEvent.ACTION_POINTER_UP -> {
-                            pi.eventType = EventType.POINTER_UP
-                            penDown = false
-                        }
+                        MotionEvent.ACTION_DOWN -> penDown = true
+                        MotionEvent.ACTION_POINTER_DOWN -> penDown = true
+                        MotionEvent.ACTION_UP -> penDown = false
+                        MotionEvent.ACTION_POINTER_UP -> penDown = false
                     }
                 }
 
@@ -202,26 +189,12 @@ class TouchInputView : View {
                         && (action != MotionEvent.ACTION_UP && action != MotionEvent.ACTION_POINTER_UP))
                         continue
 
-                    pi.pointerType = PointerType.TOUCH
-
                     // Finger touch detected (tap or gesture)
                     when (action) {
-                        MotionEvent.ACTION_DOWN -> {
-                            pi.eventType = EventType.DOWN
-                            touchDown = true
-                        }
-                        MotionEvent.ACTION_POINTER_DOWN -> {
-                            pi.eventType = EventType.POINTER_DOWN
-                            touchDown = true
-                        }
-                        MotionEvent.ACTION_UP -> {
-                            pi.eventType = EventType.UP
-                            touchDown = false
-                        }
-                        MotionEvent.ACTION_POINTER_UP -> {
-                            pi.eventType = EventType.POINTER_UP
-
-                        }
+                        MotionEvent.ACTION_DOWN -> touchDown = true
+                        MotionEvent.ACTION_POINTER_DOWN -> touchDown = true
+                        MotionEvent.ACTION_UP -> touchDown = false
+                        MotionEvent.ACTION_POINTER_UP -> touchDown = false
                     }
                 }
                 else -> {}
