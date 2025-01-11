@@ -23,11 +23,11 @@
     <Setting Name="MaxEffectiveInput" Type="System.Single" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
-    <Setting Name="MaxOutput" Type="System.Single" Scope="User">
-      <Value Profile="(Default)">1</Value>
-    </Setting>
     <Setting Name="Port" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">18998</Value>
+    </Setting>
+    <Setting Name="MaxOutput" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">1</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -109,18 +109,6 @@ namespace AndroPen.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1")]
-        public float MaxOutput {
-            get {
-                return ((float)(this["MaxOutput"]));
-            }
-            set {
-                this["MaxOutput"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("18998")]
         public int Port {
             get {
@@ -128,6 +116,18 @@ namespace AndroPen.Properties {
             }
             set {
                 this["Port"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public float MaxOutput {
+            get {
+                return ((float)(this["MaxOutput"]));
+            }
+            set {
+                this["MaxOutput"] = value;
             }
         }
     }

@@ -8,7 +8,7 @@ public partial class MainForm : Form
     /// <summary>
     /// This is the size of the X on the close button
     /// </summary>
-    private const int CROSS_SIZE = 16; 
+    private const int CROSS_SIZE = 16;
 
     /// <summary>
     /// This is the height of the form header.
@@ -134,10 +134,10 @@ public partial class MainForm : Form
         Brush connectionBrush = new SolidBrush( Program.socketManager.IsConnected ? Color.Green : Color.Red );
         e.Graphics.FillEllipse( connectionBrush, new( 124, 4, 8, 8 ) );
 
-        DrawCloseButton(e.Graphics);
+        DrawCloseButton( e.Graphics );
     }
 
-    protected void DrawCloseButton(Graphics g)
+    protected void DrawCloseButton( Graphics g )
     {
         Rectangle closeBox = GetCloseBox();
 
@@ -245,5 +245,14 @@ public partial class MainForm : Form
          */
         base.OnMouseLeave( e );
         Invalidate();
+    }
+
+    private void GroupboxPaint( object sender, PaintEventArgs e )
+    {
+        if ( sender is GroupBox gb )
+        {
+            using( Brush brush = new SolidBrush( this.ForeColor ) )
+                e.Graphics.DrawString( gb.Text, gb.Font, brush, 8, 0 );
+        }
     }
 }

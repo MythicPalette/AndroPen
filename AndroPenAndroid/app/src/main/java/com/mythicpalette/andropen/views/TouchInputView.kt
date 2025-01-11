@@ -1,17 +1,13 @@
-package com.mythicpalette.andropen
+package com.mythicpalette.andropen.views
 
 import android.content.Context
-import android.content.Context.SENSOR_SERVICE
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.hardware.Sensor
-import android.hardware.SensorManager
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
-import android.widget.Button
-import androidx.core.content.ContextCompat.getSystemService
+import com.mythicpalette.andropen.R
 import com.mythicpalette.andropen.data.EventType
 import com.mythicpalette.andropen.data.PointerInfo
 import com.mythicpalette.andropen.data.PointerType
@@ -24,11 +20,26 @@ import java.nio.ByteOrder
 /**
  * TODO: document your custom view class.
  */
+enum class BorderCoverStyle(val value: Int) {
+    Shortest(0), Longest(1), Independent(2);
+
+    companion object {
+        fun fromValue(value: Int): BorderCoverStyle {
+            return values().find { it.value == value }
+                ?: throw IllegalArgumentException("Invalid value for BorderStyle: $value")
+        }
+    }
+}
+
 class TouchInputView : View {
     private var penHovering: Boolean = false
     private var penTouching: Boolean = false
 
-    var socketHandler: SocketHandler? = null
+    var onTouch: (MutableList<PointerInfo>) -> Unit = {}
+    var onHover: (PointerInfo) -> Unit = {}
+
+    var borderCoverStyle: BorderCoverStyle = BorderCoverStyle.Shortest
+    var borderCoverage: Float = 1f
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
         init(attrs);
@@ -51,12 +62,15 @@ class TouchInputView : View {
             try {
                 val strokeWidth = getDimension(R.styleable.TouchInputView_strokeWidth, 4f)
                 val borderColor = getColor(R.styleable.TouchInputView_borderColor, Color.WHITE)
+                borderCoverage = getFloat(R.styleable.TouchInputView_borderCoverage, 1f)
+                borderCoverStyle = BorderCoverStyle.fromValue(getInt(R.styleable.TouchInputView_borderCoverageStyle, 0))
 
                 borderPaint.apply {
                     color = borderColor
                     this.strokeWidth = strokeWidth
                     style = Paint.Style.STROKE
                 }
+
             } finally {
                 recycle()
             }
@@ -74,25 +88,47 @@ class TouchInputView : View {
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        val lineLength = this.width*0.1f
         val cornerX: Float = this.width.toFloat()
         val cornerY: Float = this.height.toFloat()
 
+        if ( this.borderCoverage == 0f )
+            return
+
+        var vLen = this.height*(this.borderCoverage * 0.5f)
+        var hLen = this.width*(this.borderCoverage * 0.5f)
+
+        if ( this.borderCoverStyle == BorderCoverStyle.Shortest )
+        {
+            // If we're using the shortest side then find the shorter value and duplicate
+            if ( vLen < hLen )
+                hLen = vLen
+            else
+                vLen = hLen
+        }
+        else if ( this.borderCoverStyle == BorderCoverStyle.Longest )
+        {
+            // If we're using the longest side then find the longer value and duplicate
+            if ( vLen > hLen )
+                hLen = vLen
+            else
+                vLen = hLen
+        }
+
         // Top left corner
-        canvas.drawLine(0f, 0f, lineLength, 0f, borderPaint)
-        canvas.drawLine(0f, 0f, 0f, lineLength, borderPaint)
+        canvas.drawLine(0f, 0f, hLen, 0f, borderPaint)
+        canvas.drawLine(0f, 0f, 0f, vLen, borderPaint)
 
         // Top right corner
-        canvas.drawLine(cornerX-lineLength, 0f, cornerX, 0f, borderPaint)
-        canvas.drawLine(cornerX, 0f, cornerX, lineLength, borderPaint)
+        canvas.drawLine(cornerX - hLen, 0f, cornerX, 0f, borderPaint)
+        canvas.drawLine(cornerX, 0f, cornerX, vLen, borderPaint)
 
         // Bottom left corner
-        canvas.drawLine(0f, cornerY - lineLength, 0f, cornerY, borderPaint);
-        canvas.drawLine(0f, cornerY, lineLength, cornerY, borderPaint);
+        canvas.drawLine(0f, cornerY - vLen, 0f, cornerY, borderPaint);
+        canvas.drawLine(0f, cornerY, hLen, cornerY, borderPaint);
 
         // Bottom right corner
-        canvas.drawLine(cornerX, cornerY - lineLength, cornerX, cornerY, borderPaint);
-        canvas.drawLine(cornerX - lineLength, cornerY, cornerX, cornerY, borderPaint);
+        canvas.drawLine(cornerX, cornerY - vLen, cornerX, cornerY, borderPaint);
+        canvas.drawLine(cornerX - hLen, cornerY, cornerX, cornerY, borderPaint);
     }
 
     override fun onTouchEvent(ev: MotionEvent): Boolean {
@@ -148,25 +184,11 @@ class TouchInputView : View {
                         MotionEvent.ACTION_POINTER_UP -> pi.eventType = EventType.POINTER_UP
                     }
                 }
-
                 else -> {}
             }
             infos.add(pi)
         }
-
-        // Create the byte buffer.
-        val buffer =
-            ByteBuffer.allocate(4 + (68 * infos.size)).order(ByteOrder.LITTLE_ENDIAN)
-
-        // Serialize the number of touch events to send.
-        buffer.putInt(infos.size)
-
-        // Serialize the touch data.
-        for (pi in infos)
-            buffer.put(pi.serialize())
-
-        // Send the data.
-        socketHandler?.send(buffer.array())
+        this.onTouch(infos)
         return true
         //
         //
@@ -185,11 +207,6 @@ class TouchInputView : View {
     }
 
     override fun onHoverEvent(ev: MotionEvent): Boolean {
-
-        // Send the pointer count.
-        val buffer = ByteBuffer.allocate(4 + (68*ev.pointerCount)).order(ByteOrder.LITTLE_ENDIAN)
-        buffer.putInt(ev.pointerCount)
-
         val pi = PointerInfo(
             pointerId = ev.getPointerId(0),
             eventType = EventType.HOVER_ENTER,
@@ -212,9 +229,8 @@ class TouchInputView : View {
                 pi.eventType = EventType.HOVER_EXIT
             }
         }
-        buffer.put(pi.serialize())
 
-        socketHandler?.send(buffer.array())
+        this.onHover(pi);
         return true
     }
 

@@ -1,4 +1,4 @@
-package com.mythicpalette.andropen
+package com.mythicpalette.andropen.views
 
 import android.content.Context
 import android.graphics.Canvas
@@ -7,6 +7,7 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.widget.Button
+import com.mythicpalette.andropen.R
 
 /**
  * TODO: document your custom view class.

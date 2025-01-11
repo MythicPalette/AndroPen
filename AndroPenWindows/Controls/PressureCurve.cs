@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Drawing;
 using AndroPen.Data;
 using AndroPen.Helpers;
 
@@ -39,6 +40,8 @@ public class PressureCurve : Control
     [DesignerSerializationVisibility( DesignerSerializationVisibility.Visible )]
     public float GridSnapRange { get; set; } = 0.05f;
 
+    protected PointF[] _gridSnapPoints;
+
 
     /// <summary>
     /// Default constructor.
@@ -47,6 +50,17 @@ public class PressureCurve : Control
     {
         this.DoubleBuffered = true; // Prevent flickering
         SetStyle( ControlStyles.ResizeRedraw, true );
+
+        this._gridSnapPoints = new PointF[25];
+
+        int i = 0;
+        for ( int y = 0; y <= 4; y++ )
+        {
+            for( int x = 0; x <= 4; x++ )
+            {
+                this._gridSnapPoints[i++] = new( x * 0.25f, y * 0.25f );
+            }
+        }
     }
 
     protected override void OnPaint( PaintEventArgs e )
@@ -229,43 +243,31 @@ public class PressureCurve : Control
         Invalidate(); // Redraw to show the updated positions
     }
 
-    protected virtual PointF DoSnap( PointF point, PointF snap )
+    protected virtual PointF DoSnaps( PointF point, PointF[] snaps )
     {
-        if(
-            point.X < snap.X + this.GridSnapRange
-            && point.X > snap.X - this.GridSnapRange
-            && point.Y < snap.Y + this.GridSnapRange
-            && point.Y > snap.Y - this.GridSnapRange )
-            point = snap;
+        // Go through each point
+        foreach( PointF snap in snaps )
+        {
+            // Check if any of them are within snap range.
+            if(
+                point.X < snap.X + this.GridSnapRange
+                && point.X > snap.X - this.GridSnapRange
+                && point.Y < snap.Y + this.GridSnapRange
+                && point.Y > snap.Y - this.GridSnapRange )
+                return snap; // Found point in range so snap to it.
+        }
         return point;
     }
 
-    protected virtual PointF ValidateStartPoint( PointF point )
-    {
-        // Never allow the curve to get backwards.
-        if( point.X >= Settings.MaxEffectiveInput - 0.1f )
-            point.X = Settings.MaxEffectiveInput - 0.1f;
-        if( point.Y >= Settings.MaxOutput - 0.1f )
-            point.Y = Settings.MaxOutput - 0.1f;
-
-        // Run snapping and return the value.
-        return DoSnap( point, new( 0, 0 ) );
-    }
+    protected virtual PointF ValidateStartPoint( PointF point ) =>
+        new (float.Clamp( point.X, 0f, 0.5f ), 0f );
 
     protected virtual PointF ValidateCenterPoint( PointF point ) =>
         // Run snapping and return the value.
-        DoSnap( point, new( 0.5f, 0.5f ) );
+        DoSnaps( point, this._gridSnapPoints );
 
-    protected virtual PointF ValidateEndPoint( PointF point )
-    {
-        // Never allow the curve to get backwards.
-        if( point.X <= Settings.ActivationThreshold + 0.1f )
-            point.X = Settings.ActivationThreshold + 0.1f;
-        if( point.Y <= Settings.InitialValue + 0.1f )
-            point.Y = Settings.InitialValue + 0.1f;
-
-        return DoSnap( point, new(1f,1f));
-    }
+    protected virtual PointF ValidateEndPoint( PointF point ) => 
+        new( float.Clamp( point.X, 0.5f, 1f ), 1f );
 
     protected override void OnMouseUp( MouseEventArgs e )
     {

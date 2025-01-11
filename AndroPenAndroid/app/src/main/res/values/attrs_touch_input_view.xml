@@ -2,5 +2,11 @@
     <declare-styleable name="TouchInputView">
         <attr name="strokeWidth" format="dimension" />
         <attr name="borderColor" format="color" />
+        <attr name="borderCoverage" format="float"/>
+        <attr name="borderCoverageStyle">
+            <enum name="shortest" value="0"/>
+            <enum name="longest" value="1"/>
+            <enum name="independent" value= "2"/>
+        </attr>
     </declare-styleable>
 </resources>
