@@ -41,6 +41,8 @@ class TouchInputView : View {
     var borderCoverStyle: BorderCoverStyle = BorderCoverStyle.Shortest
     var borderCoverage: Float = 1f
 
+    private var lastTouches: MutableList<PointerInfo> = mutableListOf()
+
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
         init(attrs);
     }
@@ -83,7 +85,7 @@ class TouchInputView : View {
         style = Paint.Style.STROKE
     }
 
-    private val path = android.graphics.Path()
+    //private val path = android.graphics.Path()
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -150,6 +152,15 @@ class TouchInputView : View {
                 viewWidth = viewWidth,          // View resolution
                 viewHeight = viewHeight
             )
+
+            // Check if the pointer has a previous track
+            for( prev in lastTouches ) {
+                if ( prev.pointerId == pi.pointerId ) { // Found a match
+                    // Get the difference between locations.
+                    pi.velocityX = pi.x - prev.x
+                    pi.velocityY = pi.y - prev.y
+                }
+            }
 
             // Check if the input device is a pen or a finger
             when (ev.getToolType(i)) {
@@ -235,7 +246,7 @@ class TouchInputView : View {
     }
 
     fun clearCanvas() {
-        path.reset()
+        //path.reset()
         invalidate() // Redraw the view
     }
 }

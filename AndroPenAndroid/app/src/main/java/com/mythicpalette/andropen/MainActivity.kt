@@ -21,6 +21,12 @@ import java.nio.ByteOrder
 class MainActivity : AppCompatActivity() {
     private var socketHandler: SocketHandler = SocketHandler();
 
+    companion object {
+        const val DRAW_AREA_ID = 0
+        const val SLIDER_1_ID = 1
+        const val SLIDER_2_ID = 2
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +59,10 @@ class MainActivity : AppCompatActivity() {
         drawArea.onTouch = { infos ->
             // Create the byte buffer.
             val buffer =
-                ByteBuffer.allocate(4 + (68 * infos.size)).order(ByteOrder.LITTLE_ENDIAN)
+                ByteBuffer.allocate(8 + (56 * infos.size)).order(ByteOrder.LITTLE_ENDIAN)
+
+            // Serialize the sender id
+            buffer.putInt(DRAW_AREA_ID);
 
             // Serialize the number of touch events to send.
             buffer.putInt(infos.size)
@@ -69,8 +78,9 @@ class MainActivity : AppCompatActivity() {
             // Send the pointer count.
             val buffer = ByteBuffer.allocate(4 + 68).order(ByteOrder.LITTLE_ENDIAN)
 
-            buffer.putInt(1)
-            buffer.put(pi.serialize())
+            buffer.putInt(DRAW_AREA_ID) // This is the id of the sender.
+            buffer.putInt(1) // There is only one pointer that can hover.
+            buffer.put(pi.serialize()) // This is the PointerInfo serialized.
 
             socketHandler.send(buffer.array())
         }

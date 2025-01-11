@@ -22,22 +22,20 @@ internal class Client
         {
             try
             {
-                //_socket.Receive( data );
-                byte[] countBytes = Read( 4 );
+                // Prepare a remote event receiver.
+                RemoteEvent remoteEvent = new();
 
-                // Convert the data bytes to an int.
+                /*
+                 * Get the ID of the sender. This is important for tracking which view 
+                 * sent the event as different views have different uses.
+                 */
+                byte[] senderBytes = Read(4);
+                remoteEvent.Sender = BitConverter.ToInt32( senderBytes, 0 );
+
+                // The second set of bytes contains the number of touch events to read
+                byte[] countBytes = Read( 4 );
                 int count = BitConverter.ToInt32( countBytes, 0 );
 
-                // Count should never be greater than 10.
-                if( count > 10 )
-                {
-                    // Something has gone wrong here. 
-                    Logging.Error( $"Invalid Touch Count [{count}]" );
-                    continue;
-                }
-
-                List<RemotePointerInfo> touches = [];
-                RemotePointerInfo? pen = null;
                 // Get the expected number of RemotePointerInfo
                 for( int i = 0; i < count; i++ )
                 {
@@ -45,21 +43,10 @@ internal class Client
                     byte[] data = Read( RemotePointerInfo.BYTE_LENGTH );
                     RemotePointerInfo rpi = RemotePointerInfo.DeserializePointerInfo( data );
 
-                    // Only one pen should ever be down at a time.
-                    if( rpi.PtrType == RemotePointerType.Pen )
-                        pen = rpi;
-                    // Up to 10 touches can exist at a time.
-                    else
-                        touches.Add( rpi );
+                    if ( rpi.PtrType == RemotePointerType.Pen ) remoteEvent.Pen = rpi;
+                    else remoteEvent.Touches.Add( rpi );
                 }
-
-                // Simulate touches if necessary.
-                if( touches.Count > 0 )
-                    Program.inputHandler.SimulateTouch( [.. touches] );
-
-                // Simulate pen if necessary.
-                if( pen != null )
-                    Program.inputHandler.SimulatePen( pen );
+                EventProcessor.ProcessEvent( remoteEvent );
             }
             catch( SocketException se )
             {
