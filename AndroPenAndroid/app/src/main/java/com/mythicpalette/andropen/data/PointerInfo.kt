@@ -1,11 +1,12 @@
 package com.mythicpalette.andropen.data
 
+import android.view.MotionEvent
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 data class PointerInfo(
     var pointerId: Int, // Unique pointer identifier (e.g., a finger or stylus)
-    var eventType: EventType = EventType.MOVE, // Event type (DOWN, MOVE, UP, HOVER_ENTER, HOVER_MOVE, HOVER_EXIT)
+    var eventType: Int, // Event type (DOWN, MOVE, UP, HOVER_ENTER, HOVER_MOVE, HOVER_EXIT)
     var x: Float, // X coordinate of the pointer
     var y: Float, // Y coordinate of the pointer
     var pressure: Float = 0f, // Pressure applied (0.0 - 1.0)
@@ -28,7 +29,7 @@ fun PointerInfo.serialize(): ByteArray {
 
     // Serialize the data
     buffer.putInt(pointerId)
-    buffer.putInt(eventType.ordinal)
+    buffer.putInt(eventType)
     buffer.putFloat(x)
     buffer.putFloat(y)
     buffer.putFloat(pressure)
@@ -43,10 +44,6 @@ fun PointerInfo.serialize(): ByteArray {
 
     // Return the byte array
     return buffer.array()
-}
-
-enum class EventType {
-    DOWN, POINTER_DOWN, MOVE, UP, POINTER_UP, HOVER_ENTER, HOVER_MOVE, HOVER_EXIT
 }
 
 enum class PointerType {

@@ -6,14 +6,14 @@
 /// </summary>
 public enum RemoteEventType
 {
-    Down,
-    PointerDown,
-    Move,
-    Up,
-    PointerUp,
-    HoverEnter,
-    HoverMove,
-    HoverExit
+    Down = 0x00000000,
+    Up = 0x00000001,
+    Move = 0x00000002,
+    PointerDown = 0x00000005,
+    PointerUp = 0x00000006,
+    HoverMove = 0x00000007,
+    HoverEnter = 0x00000009,
+    HoverExit = 0x0000000a
 }
 
 /// <summary>

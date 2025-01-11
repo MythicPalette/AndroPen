@@ -12,6 +12,10 @@ import com.mythicpalette.andropen.data.EventType
 import com.mythicpalette.andropen.data.PointerInfo
 import com.mythicpalette.andropen.data.PointerType
 import com.mythicpalette.andropen.helpers.Settings
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
  * TODO: document your custom view class.
@@ -28,8 +32,9 @@ enum class BorderCoverStyle(val value: Int) {
 }
 
 class TouchInputView : View {
-    private var penHovering: Boolean = false
-    private var penTouching: Boolean = false
+    private var penHover: Boolean = false
+    private var penDown: Boolean = false
+    private var touchDown: Boolean = false
 
     var onTouch: (Int, MutableList<PointerInfo>) -> Unit = {_, _ ->}
     var onHover: (Int, PointerInfo) -> Unit = {_, _ ->}
@@ -169,31 +174,54 @@ class TouchInputView : View {
                     when (action) {
                         MotionEvent.ACTION_DOWN -> {
                             pi.eventType = EventType.DOWN     // Event Type
-                            penTouching = true
+                            penDown = true
+                            println("Pen Down")
+                        }
+                        MotionEvent.ACTION_POINTER_DOWN -> {
+                            pi.eventType = EventType.POINTER_DOWN     // Event Type
+                            penDown = true
+                            println("Pen Down")
                         }
                         MotionEvent.ACTION_UP -> {
                             pi.eventType = EventType.UP
-                            penTouching = false
+                            penDown = false
+                            println("Pen Up")
                         }
                         MotionEvent.ACTION_POINTER_UP -> {
                             pi.eventType = EventType.POINTER_UP
-                            penTouching = false
+                            penDown = false
                         }
                     }
                 }
 
                 MotionEvent.TOOL_TYPE_FINGER -> {
-                    // If the pen is in use, disable touching.
-                    if ( Settings.PenBlocksTouch && ( penHovering || penTouching )) continue
+                    // If the pen is in use and the event is not UP or Pointer UP then ignore it
+                    if (
+                        Settings.PenBlocksTouch
+                        && ( penHover || penDown )
+                        && (action != MotionEvent.ACTION_UP && action != MotionEvent.ACTION_POINTER_UP))
+                        continue
 
-                    pi.pointerType = PointerType.TOUCH;
+                    pi.pointerType = PointerType.TOUCH
 
                     // Finger touch detected (tap or gesture)
                     when (action) {
-                        MotionEvent.ACTION_DOWN -> pi.eventType = EventType.DOWN
-                        MotionEvent.ACTION_POINTER_DOWN -> pi.eventType = EventType.POINTER_DOWN
-                        MotionEvent.ACTION_UP -> pi.eventType = EventType.UP
-                        MotionEvent.ACTION_POINTER_UP -> pi.eventType = EventType.POINTER_UP
+                        MotionEvent.ACTION_DOWN -> {
+                            pi.eventType = EventType.DOWN
+                            touchDown = true
+                        }
+                        MotionEvent.ACTION_POINTER_DOWN -> {
+                            pi.eventType = EventType.POINTER_DOWN
+                            touchDown = true
+                        }
+                        MotionEvent.ACTION_UP -> {
+                            pi.eventType = EventType.UP
+                            touchDown = false
+                        }
+                        MotionEvent.ACTION_POINTER_UP -> {
+                            pi.eventType = EventType.POINTER_UP
+
+                        }
                     }
                 }
                 else -> {}
@@ -235,11 +263,28 @@ class TouchInputView : View {
         );
 
         when (ev.action) {
-            MotionEvent.ACTION_HOVER_ENTER -> penHovering = true;
+            MotionEvent.ACTION_HOVER_ENTER -> {
+                penHover = true
+                println("Hover Enter")
+            };
             MotionEvent.ACTION_HOVER_MOVE -> pi.eventType = EventType.HOVER_MOVE
             MotionEvent.ACTION_HOVER_EXIT -> {
-                penHovering = false
-                pi.eventType = EventType.HOVER_EXIT
+                /*
+                 Run the HOVER_EXIT event on a delay to prevent sending "HOVER_EXIT" event before
+                 the pen down event. This is because the event chain for Windows is different
+                 from the Android event chain.
+                 */
+                CoroutineScope(Dispatchers.IO).launch{
+                    delay(500)
+                    if ( penDown ) return@launch
+                    penHover = false
+                    pi.eventType = EventType.HOVER_EXIT
+
+                    lastTouches.clear()
+                    lastTouches.add(pi)
+                    onHover(SenderId, pi);
+                }
+                return true
             }
         }
 
