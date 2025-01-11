@@ -11,11 +11,12 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:columnCount="2"
-            app:layout_constraintWidth_max="300dp"
+            app:layout_constraintWidth_max="500dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            >
 
             <TextView
                 android:layout_height="wrap_content"
@@ -70,6 +71,38 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
             </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/slider_1_sensitivity"
+                android:textColor="@color/text"
+                />
+            <SeekBar
+                android:id="@+id/sensitivity1"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_gravity="fill"
+                android:min="1"
+                android:max="25"
+                />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/slider_2_sensitivity"
+                android:textColor="@color/text"
+                />
+
+            <SeekBar
+                android:id="@+id/sensitivity2"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_gravity="fill"
+                android:min="5"
+                android:max="50"
+                />
 
             <Space
                 android:layout_height="0dp"

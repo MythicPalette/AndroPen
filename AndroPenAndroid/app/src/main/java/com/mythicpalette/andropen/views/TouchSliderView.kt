@@ -31,7 +31,7 @@ class TouchSliderView : View {
      Move Sensitivity is used to control how frequently move events passed. This is
      to ensure that touch input views used like sliders
      */
-    private var sensitivity: Float = 0.1f
+    var sensitivity: Float = 0.1f
 
     private var orientation: Orientation = Orientation.Vertical
 

@@ -71,8 +71,7 @@
             app:borderCoverage="0.5"
             app:borderCoverageStyle="independent"
             app:strokeWidth="2dp"
-            app:senderId="1"
-            app:sensitivity="0.1"/>
+            app:senderId="1"/>
 
         <Space
             android:layout_width="match_parent"
@@ -88,7 +87,6 @@
             app:borderCoverage="0.5"
             app:borderCoverageStyle="independent"
             app:strokeWidth="2dp"
-            app:senderId="2"
-            app:sensitivity="0.25"/>
+            app:senderId="2"/>
     </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.constraintlayout.widget.ConstraintLayout>

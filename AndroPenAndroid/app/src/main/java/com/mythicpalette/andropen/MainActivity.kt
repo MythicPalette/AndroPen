@@ -11,6 +11,7 @@ import com.mythicpalette.andropen.data.PointerInfo
 import com.mythicpalette.andropen.data.serialize
 import com.mythicpalette.andropen.helpers.ConnectionState
 import com.mythicpalette.andropen.helpers.Settings
+import com.mythicpalette.andropen.helpers.SettingsEventListener
 import com.mythicpalette.andropen.helpers.SocketHandler
 import com.mythicpalette.andropen.helpers.SocketStateListener
 import com.mythicpalette.andropen.views.SignalButton
@@ -57,6 +58,7 @@ class MainActivity : AppCompatActivity() {
 
         val drawArea =  findViewById<TouchInputView>(R.id.drawArea)
 
+
         drawArea.onTouch = { id, infos ->
             onMultiTouch(id, infos)
         }
@@ -65,12 +67,26 @@ class MainActivity : AppCompatActivity() {
             onSingleTouch(id, infos)
         }
 
-        findViewById<TouchSliderView>(R.id.dragSlider1).onTouch = { id, info ->
+        val slider1 = findViewById<TouchSliderView>(R.id.dragSlider1)
+        slider1.sensitivity = Settings.Slider1Sensitivity
+        slider1.onTouch = { id, info ->
             onSingleTouch(id, info)
         }
-        findViewById<TouchSliderView>(R.id.dragSlider2).onTouch = { id, info ->
+
+        val slider2 = findViewById<TouchSliderView>(R.id.dragSlider2)
+        slider2.sensitivity = Settings.Slider2Sensitivity
+        slider2.onTouch = { id, info ->
             onSingleTouch(id, info)
         }
+
+        val settingsListener = object : SettingsEventListener {
+            override fun onSettingsChanged() {
+                slider1.sensitivity = Settings.Slider1Sensitivity
+                slider2.sensitivity = Settings.Slider2Sensitivity
+            }
+        }
+
+        Settings.addListener(settingsListener)
 
         findViewById<ImageButton>(R.id.show_settings_button).setOnClickListener{ _ ->
             val intent = Intent(this, SettingsActivity::class.java)
