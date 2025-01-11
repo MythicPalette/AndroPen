@@ -62,6 +62,16 @@ public static class Win32
     [DllImport( "user32.dll", SetLastError = true )]
     internal static extern int GetSystemMetrics( [In] int nIndex );
 
+    [DllImport( "user32.dll", SetLastError = true )]
+    internal static extern uint SendInput( uint nInputs, INPUT[] pInputs, int cbSize );
+
+    [DllImport( "user32.dll" )]
+    private static extern short VkKeyScan( char ch );
+
+    // Constants for key event flags
+    internal const int INPUT_KEYBOARD = 1;
+    internal const uint KEYEVENTF_KEYUP = 0x0002; // Key up event
+
     /*
      * The following two constants are for GetSystemMetrics
      */
@@ -125,5 +135,19 @@ public static class Win32
     ""PerformanceCount"": {pti.PerformanceCount},
     ""ButtonChangeType"": ""{pti.ButtonChangeType}""
 }}";
+    }
+
+    public static ushort GetVirtualKeyCode( this char ch )
+    {
+        short vk = VkKeyScan(ch);
+
+        // Check if the character cannot be mapped
+        if( vk == -1 )
+        {
+            throw new ArgumentException( $"Cannot find a virtual key code for character: {ch}" );
+        }
+
+        // Extract the VK code (lower byte) from the result
+        return (ushort)( vk & 0xFF );
     }
 }

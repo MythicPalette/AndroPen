@@ -31,7 +31,12 @@ internal class EventProcessor
 
     protected static void ProcessSlider1( RemoteEvent re )
     {
-        Console.WriteLine( "test" );
+        if( re.Touches[0].Velocity.Y == 0 )
+            return;
+        else if( re.Touches[0].Velocity.Y > 0 )
+            InputHandler.SimulateKeyPress( ']'.GetVirtualKeyCode() );
+        else
+            InputHandler.SimulateKeyPress( '['.GetVirtualKeyCode() );
     }
 
     protected static void ProcessSlider2( RemoteEvent re )
