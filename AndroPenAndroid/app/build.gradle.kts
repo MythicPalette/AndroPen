@@ -20,6 +20,12 @@ android {
         }
     }
 
+    externalNativeBuild {
+        cmake {
+            path(file("src/main/CMakeLists.txt"))  // Path to your CMakeLists.txt file
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false

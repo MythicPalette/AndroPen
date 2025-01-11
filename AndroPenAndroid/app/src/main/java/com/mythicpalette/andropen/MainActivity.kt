@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.mythicpalette.andropen.data.PointerInfo
 import com.mythicpalette.andropen.data.serialize
 import com.mythicpalette.andropen.helpers.ConnectionState
+import com.mythicpalette.andropen.helpers.NativeInput
 import com.mythicpalette.andropen.helpers.Settings
 import com.mythicpalette.andropen.helpers.SettingsEventListener
 import com.mythicpalette.andropen.helpers.SocketHandler
@@ -22,12 +23,6 @@ import java.nio.ByteOrder
 
 class MainActivity : AppCompatActivity() {
     private var socketHandler: SocketHandler = SocketHandler();
-
-    companion object {
-        const val DRAW_AREA_ID = 0
-        const val SLIDER_1_ID = 1
-        const val SLIDER_2_ID = 2
-    }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,6 +88,21 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
             true
         }
+
+        Thread {
+            while (true) {
+                val pointerInfoArray = NativeInput.getPointerInfo()
+
+                pointerInfoArray?.forEach { pi ->
+                    println("Pointer ID: ${pi.pointerId}")
+                    println("Tool Type: ${pi.toolType}")
+                    println("Position: (${pi.x}, ${pi.y})")
+                    println("Pressure: ${pi.pressure}")
+                    println("Tilt: (${pi.tiltX}, ${pi.tiltY})")
+                }
+            }
+        }
+
     }
 
     fun onMultiTouch(id: Int, infos: MutableList<PointerInfo> ) {

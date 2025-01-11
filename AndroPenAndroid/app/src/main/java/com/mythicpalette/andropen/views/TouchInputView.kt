@@ -10,6 +10,7 @@ import android.view.View
 import com.mythicpalette.andropen.R
 import com.mythicpalette.andropen.data.PointerInfo
 import com.mythicpalette.andropen.data.toPointerInfo
+import com.mythicpalette.andropen.helpers.NativeInput
 import com.mythicpalette.andropen.helpers.Settings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -138,7 +139,7 @@ class TouchInputView : View {
     }
 
     override fun onTouchEvent(ev: MotionEvent): Boolean {
-
+        println(NativeInput.getPointerInfo())
         val infos: MutableList<PointerInfo> = mutableListOf()
         val action = ev.actionMasked
         val stamp = System.currentTimeMillis()
