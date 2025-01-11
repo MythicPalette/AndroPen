@@ -4,17 +4,14 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.Point
 import android.graphics.PointF
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import androidx.compose.foundation.gestures.Orientation
 import com.mythicpalette.andropen.R
-import com.mythicpalette.andropen.data.EventType
 import com.mythicpalette.andropen.data.PointerInfo
-import com.mythicpalette.andropen.data.PointerType
-import com.mythicpalette.andropen.helpers.Settings
+import com.mythicpalette.andropen.data.toPointerInfo
 import kotlin.math.abs
 
 class TouchSliderView : View {
@@ -147,29 +144,14 @@ class TouchSliderView : View {
         val viewHeight = this.height
         val evPoint = this.eventPoint
 
-        val pi = PointerInfo(
-            pointerId = ev.getPointerId(0), // Pointer ID
-            x = ev.x, y = ev.y,                        // Coordinates
-            timeStamp = stamp,                         // Timestamp
-            viewWidth = viewWidth,                     // View resolution
-            viewHeight = viewHeight,
-        )
+        val pi = ev.toPointerInfo(0, stamp, viewWidth, viewHeight )
 
         // Get the action type and pass it to the pointer info.
         when (action) {
-            MotionEvent.ACTION_DOWN -> {
-                pi.eventType = EventType.DOWN
-                eventPoint = PointF(ev.x, ev.y)
-            }     // Event Type
-            MotionEvent.ACTION_POINTER_DOWN -> pi.eventType = EventType.POINTER_DOWN
-            MotionEvent.ACTION_UP -> {
-                pi.eventType = EventType.UP
-                eventPoint = null
-            }
-            MotionEvent.ACTION_POINTER_UP -> {
-                pi.eventType = EventType.POINTER_UP
-                eventPoint = null
-            }
+            MotionEvent.ACTION_DOWN -> eventPoint = PointF(ev.x, ev.y)
+            MotionEvent.ACTION_POINTER_DOWN -> eventPoint = PointF(ev.x, ev.y)
+            MotionEvent.ACTION_UP -> eventPoint = null
+            MotionEvent.ACTION_POINTER_UP -> eventPoint = null
             MotionEvent.ACTION_MOVE -> {
                 if ( this.orientation == Orientation.Vertical ) {
                     if ( evPoint == null ) return true

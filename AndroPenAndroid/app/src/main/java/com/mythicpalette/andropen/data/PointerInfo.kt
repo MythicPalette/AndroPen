@@ -45,3 +45,18 @@ fun PointerInfo.serialize(): ByteArray {
     // Return the byte array
     return buffer.array()
 }
+fun MotionEvent.toPointerInfo(idx: Int, stamp: Long, viewWidth: Int, viewHeight: Int): PointerInfo {
+    val result = PointerInfo(
+        pointerId = getPointerId(idx),          // Pointer ID
+        eventType = actionMasked,
+        pointerType = getToolType(idx),
+        x = getX(idx), y = getY(idx), // Coordinates
+        timeStamp = stamp,              // Timestamp
+        pressure = getPressure(idx),
+        tiltX = getAxisValue(MotionEvent.AXIS_TILT, idx),
+        tiltY = getAxisValue(MotionEvent.AXIS_TILT, idx),
+        viewWidth = viewWidth,          // View resolution
+        viewHeight = viewHeight
+    )
+    return result
+}

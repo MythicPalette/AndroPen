@@ -9,6 +9,7 @@ import android.view.MotionEvent
 import android.view.View
 import com.mythicpalette.andropen.R
 import com.mythicpalette.andropen.data.PointerInfo
+import com.mythicpalette.andropen.data.toPointerInfo
 import com.mythicpalette.andropen.helpers.Settings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -146,18 +147,7 @@ class TouchInputView : View {
 
         // Iterate over all pointers to handle pen input (pressure, movement, etc.)
         for (i in 0 until ev.pointerCount) {
-            val pi = PointerInfo(
-                pointerId = ev.getPointerId(i),          // Pointer ID
-                eventType = action,
-                pointerType = ev.getToolType(i),
-                x = ev.getX(i), y = ev.getY(i), // Coordinates
-                timeStamp = stamp,              // Timestamp
-                pressure = ev.getPressure(i),
-                tiltX = ev.getAxisValue(MotionEvent.AXIS_TILT, i),
-                tiltY = ev.getAxisValue(MotionEvent.AXIS_TILT, i),
-                viewWidth = viewWidth,          // View resolution
-                viewHeight = viewHeight
-            )
+            val pi = ev.toPointerInfo(i, stamp, viewWidth, viewHeight )
 
             // Check if the pointer has a previous track
             for( prev in lastTouches ) {
@@ -219,19 +209,7 @@ class TouchInputView : View {
     }
 
     override fun onHoverEvent(ev: MotionEvent): Boolean {
-        val pi = PointerInfo(
-            pointerId = ev.getPointerId(0),
-            eventType = ev.actionMasked,
-            x = ev.getX(0),
-            y = ev.getY(0),
-            pressure = 0f,
-            pointerType = ev.getToolType(0),
-            tiltX = ev.getAxisValue(MotionEvent.AXIS_TILT, 0),
-            tiltY = ev.getAxisValue(MotionEvent.AXIS_TILT, 0),
-            timeStamp = System.currentTimeMillis(),
-            viewWidth = this.width,
-            viewHeight = this.height
-        )
+        val pi = ev.toPointerInfo(0, System.currentTimeMillis(), this.width, this.height )
 
         when (pi.eventType) {
             MotionEvent.ACTION_HOVER_ENTER -> penHover = true
