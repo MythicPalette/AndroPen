@@ -168,38 +168,6 @@ public class InputHandler
 
     public static void SimulateKeyPress( ushort virtualKeyCode )
     {
-        //// Create a KEYDOWN event
-        //INPUT down = new()
-        //{
-        //    type = Win32.INPUT_KEYBOARD,
-        //    u = new InputUnion
-        //    {
-        //        ki = new KEYBDINPUT
-        //        {
-        //            wVk = virtualKeyCode,
-        //            wScan = 0,
-        //            dwFlags = 0,
-        //            dwExtraInfo = IntPtr.Zero
-        //        }
-        //    }
-        //};
-
-        //// Create a KEYUP event
-        //INPUT up = new()
-        //{
-        //    type = Win32.INPUT_KEYBOARD,
-        //    u = new InputUnion
-        //    {
-        //        ki = new KEYBDINPUT
-        //        {
-        //            wVk = virtualKeyCode,
-        //            wScan = 0,
-        //            dwFlags = Win32.KEYEVENTF_KEYUP,
-        //            dwExtraInfo = IntPtr.Zero
-        //        }
-        //    }
-        //};
-
         INPUT down = new()
         {
             Type = Win32.INPUT_KEYBOARD,
@@ -230,14 +198,61 @@ public class InputHandler
             }
         };
 
-
-
         // Send both events
         INPUT[] inputs = { down, up };
         if( Win32.SendInput( (uint)inputs.Length, inputs, Marshal.SizeOf( typeof( INPUT ) ) ) == 0 )
         {
             //throw new Exception( "Failed to send input." );
             Logging.Error($"Failed to send input. Err: ${Marshal.GetHRForLastWin32Error()}");
+        }
+    }
+    public static void SimulateKeyDown( ushort virtualKeyCode )
+    {
+
+        INPUT down = new()
+        {
+            Type = Win32.INPUT_KEYBOARD,
+            Data = new()
+            {
+                Keyboard = new()
+                {
+                    KeyCode = virtualKeyCode,
+                    Scan = 0,
+                    Flags = 0,
+                    ExtraInfo = IntPtr.Zero
+                }
+            }
+        };
+
+        INPUT[] inputs = { down };
+        if( Win32.SendInput( (uint)inputs.Length, inputs, Marshal.SizeOf( typeof( INPUT ) ) ) == 0 )
+        {
+            //throw new Exception( "Failed to send input." );
+            Logging.Error( $"Failed to send input. Err: ${Marshal.GetHRForLastWin32Error()}" );
+        }
+    }
+    public static void SimulateKeyUp( ushort virtualKeyCode )
+    {
+        INPUT up = new()
+        {
+            Type = Win32.INPUT_KEYBOARD,
+            Data = new()
+            {
+                Keyboard = new()
+                {
+                    KeyCode = virtualKeyCode,
+                    Scan = 0,
+                    Flags = Win32.KEYEVENTF_KEYUP,
+                    ExtraInfo = IntPtr.Zero
+                }
+            }
+        };
+
+        INPUT[] inputs = { up };
+        if( Win32.SendInput( (uint)inputs.Length, inputs, Marshal.SizeOf( typeof( INPUT ) ) ) == 0 )
+        {
+            //throw new Exception( "Failed to send input." );
+            Logging.Error( $"Failed to send input. Err: ${Marshal.GetHRForLastWin32Error()}" );
         }
     }
 }

@@ -1,9 +1,10 @@
 <resources>
-    <declare-styleable name="TouchInputView">
+    <declare-styleable name="TouchSliderView">
         <attr name="strokeWidth"/>
         <attr name="borderColor"/>
         <attr name="borderCoverage"/>
         <attr name="borderCoverageStyle"/>
         <attr name="senderId"/>
+        <attr name="sensitivity" format="integer"/>
     </declare-styleable>
 </resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="BaseTouchView">
+        <attr name="strokeWidth" format="dimension" />
+        <attr name="borderColor" format="color" />
+        <attr name="borderCoverage" format="float"/>
+        <attr name="borderCoverageStyle">
+            <enum name="shortest" value="0"/>
+            <enum name="longest" value="1"/>
+            <enum name="independent" value= "2"/>
+        </attr>
+        <attr name="senderId" format="integer"/>
+    </declare-styleable>
+</resources>

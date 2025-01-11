@@ -61,7 +61,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.mythicpalette.andropen.views.TouchInputView
+        <com.mythicpalette.andropen.views.TouchSliderView
             android:id="@+id/dragSlider1"
             android:layout_width="32dp"
             android:layout_height="0dp"
@@ -71,13 +71,14 @@
             app:borderCoverage="0.5"
             app:borderCoverageStyle="independent"
             app:strokeWidth="2dp"
-            app:senderId="1"/>
+            app:senderId="1"
+            app:sensitivity="5"/>
 
         <Space
             android:layout_width="match_parent"
             android:layout_height="16dp" />
 
-        <com.mythicpalette.andropen.views.TouchInputView
+        <com.mythicpalette.andropen.views.TouchSliderView
             android:id="@+id/dragSlider2"
             android:layout_width="32dp"
             android:layout_height="0dp"
@@ -87,6 +88,7 @@
             app:borderCoverage="0.5"
             app:borderCoverageStyle="independent"
             app:strokeWidth="2dp"
-            app:senderId="2"/>
+            app:senderId="2"
+            app:sensitivity="5"/>
     </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.constraintlayout.widget.ConstraintLayout>

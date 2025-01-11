@@ -15,6 +15,7 @@ import com.mythicpalette.andropen.helpers.SocketHandler
 import com.mythicpalette.andropen.helpers.SocketStateListener
 import com.mythicpalette.andropen.views.SignalButton
 import com.mythicpalette.andropen.views.TouchInputView
+import com.mythicpalette.andropen.views.TouchSliderView
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
@@ -57,16 +58,18 @@ class MainActivity : AppCompatActivity() {
         val drawArea =  findViewById<TouchInputView>(R.id.drawArea)
 
         drawArea.onTouch = { id, infos ->
-            onTouch(id, infos)
+            onMultiTouch(id, infos)
         }
 
         drawArea.onHover = { id, infos ->
-            onHover(id, infos)
+            onSingleTouch(id, infos)
         }
 
-        val slider1 = findViewById<TouchInputView>(R.id.dragSlider1)
-        slider1.onTouch = { id, infos ->
-            onTouch(id, infos)
+        findViewById<TouchSliderView>(R.id.dragSlider1).onTouch = { id, info ->
+            onSingleTouch(id, info)
+        }
+        findViewById<TouchSliderView>(R.id.dragSlider2).onTouch = { id, info ->
+            onSingleTouch(id, info)
         }
 
         findViewById<ImageButton>(R.id.show_settings_button).setOnClickListener{ _ ->
@@ -76,7 +79,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun onTouch( id: Int, infos: MutableList<PointerInfo> ) {
+    fun onMultiTouch(id: Int, infos: MutableList<PointerInfo> ) {
         val buffer =
             ByteBuffer.allocate(8 + (56 * infos.size)).order(ByteOrder.LITTLE_ENDIAN)
 
@@ -93,7 +96,7 @@ class MainActivity : AppCompatActivity() {
         socketHandler.send(buffer.array())
     }
 
-    fun onHover( id: Int, pi: PointerInfo ) {
+    fun onSingleTouch(id: Int, pi: PointerInfo ) {
         // Send the pointer count.
         val buffer = ByteBuffer.allocate(4 + 68).order(ByteOrder.LITTLE_ENDIAN)
 

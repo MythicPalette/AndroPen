@@ -31,9 +31,6 @@ class TouchInputView : View {
     private var penHovering: Boolean = false
     private var penTouching: Boolean = false
 
-    private var acceptTouches: Boolean = true
-    private var acceptHover: Boolean = true
-
     var onTouch: (Int, MutableList<PointerInfo>) -> Unit = {_, _ ->}
     var onHover: (Int, PointerInfo) -> Unit = {_, _ ->}
 
@@ -60,17 +57,15 @@ class TouchInputView : View {
         // Read custom attributes
         context.theme.obtainStyledAttributes(
             attrs,
-            R.styleable.TouchInputView,
+            R.styleable.BaseTouchView,
             0, 0
         ).apply {
             try {
-                SenderId = getInt(R.styleable.TouchInputView_senderId, 0)
-                val strokeWidth = getDimension(R.styleable.TouchInputView_strokeWidth, 4f)
-                val borderColor = getColor(R.styleable.TouchInputView_borderColor, Color.WHITE)
-                borderCoverage = getFloat(R.styleable.TouchInputView_borderCoverage, 1f)
-                borderCoverStyle = BorderCoverStyle.fromValue(getInt(R.styleable.TouchInputView_borderCoverageStyle, 0))
-                acceptTouches = getBoolean(R.styleable.TouchInputView_acceptTouches, true)
-                acceptHover = getBoolean(R.styleable.TouchInputView_acceptHover, true)
+                SenderId = getInt(R.styleable.BaseTouchView_senderId, 0)
+                val strokeWidth = getDimension(R.styleable.BaseTouchView_strokeWidth, 4f)
+                val borderColor = getColor(R.styleable.BaseTouchView_borderColor, Color.WHITE)
+                borderCoverage = getFloat(R.styleable.BaseTouchView_borderCoverage, 1f)
+                borderCoverStyle = BorderCoverStyle.fromValue(getInt(R.styleable.BaseTouchView_borderCoverageStyle, 0))
 
                 borderPaint.apply {
                     color = borderColor
@@ -139,7 +134,6 @@ class TouchInputView : View {
     }
 
     override fun onTouchEvent(ev: MotionEvent): Boolean {
-        if ( !acceptTouches ) return true
 
         val infos: MutableList<PointerInfo> = mutableListOf()
         val action = ev.actionMasked
@@ -226,8 +220,6 @@ class TouchInputView : View {
     }
 
     override fun onHoverEvent(ev: MotionEvent): Boolean {
-        if ( !acceptHover ) return true
-
         val pi = PointerInfo(
             pointerId = ev.getPointerId(0),
             eventType = EventType.HOVER_ENTER,

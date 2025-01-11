@@ -1,21 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AndroPen.Data;
+﻿using AndroPen.Data;
 
 namespace AndroPen.Helpers;
 internal class EventProcessor
 {
     internal const int DRAW_AREA_ID = 0;
+    internal const int SLIDER_1_ID = 1;
+    internal const int SLIDER_2_ID = 2;
     internal static void ProcessEvent(RemoteEvent re)
     {
-        if( re.Sender == DRAW_AREA_ID )
-            ProcessDrawArea( re );
-        else
-            ProcessSlider1( re );
+        switch( re.Sender )
+        {
+            case DRAW_AREA_ID:
+                ProcessDrawArea( re ); break;
+            case SLIDER_1_ID:
+                ProcessSlider1( re ); break;
+            case SLIDER_2_ID:
+                ProcessSlider2( re ); break;
+        }
     }
 
     protected static void ProcessDrawArea( RemoteEvent re )
@@ -31,16 +32,34 @@ internal class EventProcessor
 
     protected static void ProcessSlider1( RemoteEvent re )
     {
-        if( re.Touches[0].Velocity.Y == 0 )
+        RemotePointerInfo? ev = re.Touches.Count > 0 ? re.Touches[0] : re.Pen;
+        if( ev is null )
             return;
-        else if( re.Touches[0].Velocity.Y > 0 )
-            InputHandler.SimulateKeyPress( ']'.GetVirtualKeyCode() );
-        else
+
+        if( ev.Velocity.Y == 0 )
+            return;
+        else if( ev?.Velocity.Y > 0 ) // A positive velocity means going down.
             InputHandler.SimulateKeyPress( '['.GetVirtualKeyCode() );
+        else
+            InputHandler.SimulateKeyPress( ']'.GetVirtualKeyCode() );
     }
 
     protected static void ProcessSlider2( RemoteEvent re )
     {
+        RemotePointerInfo? ev = re.Touches.Count > 0 ? re.Touches[0] : re.Pen;
+        if( ev is null )
+            return;
 
+
+        if( ev.Velocity.Y == 0 )
+            return;
+
+        InputHandler.SimulateKeyDown( 0x11 );
+        if( ev?.Velocity.Y > 0 ) // A positive velocity means going down.
+            InputHandler.SimulateKeyPress( '['.GetVirtualKeyCode() );
+        else
+            InputHandler.SimulateKeyPress( ']'.GetVirtualKeyCode() );
+
+        InputHandler.SimulateKeyUp( 0x11 );
     }
 }
