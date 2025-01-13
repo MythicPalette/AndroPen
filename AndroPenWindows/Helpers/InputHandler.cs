@@ -72,6 +72,17 @@ public class InputHandler
             };
         }
 
+        /*
+         * It appears that it's possible to break InjectSyntheticPointerInput if you send events
+         * with a delta time of 0 so we need to track the delta time and, if the current delta is
+         * 0, sleep for a single millisecond.
+         */
+        long stamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();    // Get the current stamp
+        long delta = stamp - this._lastStamp;                           // Get the delta
+        this._lastStamp = stamp;                                        // Save the current time stamp
+        if( delta == 0 )
+            Thread.Sleep( 1 );
+
         if( !Win32.InjectSyntheticPointerInput( this._touch, outData, (uint)outData.Length ) )
             Logging.Error( "Failed to inject touch input: " + Marshal.GetLastWin32Error() );
     }
