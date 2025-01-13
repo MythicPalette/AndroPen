@@ -115,20 +115,17 @@ public class InputHandler
         {
             pointerFlags = PointerFlags.Down | PointerFlags.InRange | PointerFlags.InContact;
 
+            // If the pointer is down and not the original, mark it as new.
             if( rpi.PointerId > 0 )
                 pointerFlags |= PointerFlags.New;
         }
         else if( rpi.EvType is AndroidEventType.Move )
-        {
             pointerFlags = PointerFlags.Update | PointerFlags.InRange | PointerFlags.InContact;
-        }
 
         // On Hover enter it is in range but not down or in contact
         else if( rpi.EvType is AndroidEventType.HoverEnter )
         {
             pointerFlags = PointerFlags.InRange;
-            if( rpi.PointerId > 0 )
-                pointerFlags |= PointerFlags.New;
         }
 
         // Update the position of the cursor 
@@ -136,9 +133,10 @@ public class InputHandler
         {
             pointerFlags |= PointerFlags.Update | PointerFlags.InRange;
         }
-
         else
+        {
             pointerFlags = PointerFlags.Up;
+        }
 
         return pointerFlags;
     }
@@ -185,9 +183,13 @@ public class InputHandler
     // Softness factor influences the curve. If softnessY > softnessX, the curve will be more pronounced.
     private static float ApplySoftnessCurve( float normalizedInput, float softnessX, float softnessY ) =>
         (float)Math.Pow( normalizedInput, softnessY );
+
+    /// <summary>
+    /// Assembles the <see cref="INPUT"/> as a key down event and sends it to the Windows API.
+    /// </summary>
+    /// <param name="virtualKeyCode"></param>
     public static void SimulateKeyDown( ushort virtualKeyCode )
     {
-
         INPUT down = new()
         {
             Type = Win32.INPUT_KEYBOARD,
@@ -210,6 +212,11 @@ public class InputHandler
             Logging.Error( $"Failed to send input. Err: ${Marshal.GetHRForLastWin32Error()}" );
         }
     }
+
+    /// <summary>
+    /// Assembles the <see cref="INPUT"/> as a key up event and sends it to the Windows API.
+    /// </summary>
+    /// <param name="virtualKeyCode"></param>
     public static void SimulateKeyUp( ushort virtualKeyCode )
     {
         INPUT up = new()
