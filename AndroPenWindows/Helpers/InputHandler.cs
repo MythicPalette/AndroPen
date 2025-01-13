@@ -130,6 +130,17 @@ public class InputHandler
             }
         };
 
+        /*
+         * For some reason, a pause is required here before injecting the pointer input.
+         * Without this pause, InjectSyntheticPointerInput will sometimes output the
+         * maximum pressure value. I'm not sure if this is an issue with pti not being
+         * assigned to fast enough or if it is an issue with InjectSyntheticPointerInput
+         * hitting a maximum polling rate or some kind. More testing is required.
+         * 
+         * TODO: Find a real solution for this issue.
+         */
+        Thread.Sleep( 1 );
+
         if( !Win32.InjectSyntheticPointerInput( this._pen, [pti], 1 ) )
         {
             int errorCode = Marshal.GetLastWin32Error();
