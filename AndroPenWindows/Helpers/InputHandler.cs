@@ -23,7 +23,7 @@ public class InputHandler
     // Simulate a single touch point
     public void SimulateTouch( RemotePointerInfo[] rpis ) //Vector2 point, bool isDown )
     {
-        PointerTypeInfoTouch[] outData = new PointerTypeInfoTouch[ rpis.Length ];
+        PointerTypeInfo[] outData = new PointerTypeInfo[ rpis.Length ];
         for( int i = 0; i < rpis.Length; i++ )// (RemotePointerInfo rp in rpis)
         {
             PointerFlags pointerFlags;
@@ -83,13 +83,14 @@ public class InputHandler
         if( delta == 0 )
             Thread.Sleep( 1 );
 
+        int sizeOf = Marshal.SizeOf<PointerTouchInfo>();
+        int sizOf2 = Marshal.SizeOf<PointerPenInfo>();
         if( !Win32.InjectSyntheticPointerInput( this._touch, outData, (uint)outData.Length ) )
             Logging.Error( "Failed to inject touch input: " + Marshal.GetLastWin32Error() );
     }
 
     // Simulate a pen input with pressure and tilt
     public void SimulatePen( RemotePointerInfo rpi )
-    //Vector2 loc, uint pressure, bool isDown, uint orientation = 0, int tiltX = 0, int tiltY = 0 )
     {
         // Prepare the flags
         PointerFlags pFlags = PointerFlags.None;
@@ -123,7 +124,7 @@ public class InputHandler
         float outPressure = GetPressureValue( rpi.Pressure );
 
         // Craft the pointer type info
-        PointerTypeInfoPen pti = new()
+        PointerTypeInfo pti = new()
         {
             type = PointerInputType.Pen, // Use PT_PEN for pen input
             penInfo = new()
@@ -135,7 +136,7 @@ public class InputHandler
                     pointerFlags = pFlags,              // These flags describe the event.
                     ptPixelLocation = point,            // The coordinates of the event
                 },
-                penFlags = PenFlags.None,               // Optional flag for pen-related properties
+                penFlags = TouchFlags.None,               // Optional flag for pen-related properties
                 penMask = pMask ,                       // Indicate that the pressure and tilt information is included
                 pressure = (uint)(1024f * outPressure), //(uint)(rpi.Pressure * 1024),
                 tiltX = (int)rpi.Tilt.X,                // Optional, if neededS

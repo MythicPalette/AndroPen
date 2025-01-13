@@ -32,27 +32,14 @@ public static class Win32
     /// <summary>
     /// <see href="https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-injectsyntheticpointerinput">
     /// Win32 API Function</see>
-    /// Simulates touch input.
+    /// Simulates pointer input.
     /// </summary>
     /// <param name="device">The device that sends the touch.</param>
     /// <param name="pti">An array of <see cref="PointerTypeInfoTouch"/> representing injected pointers.</param>
     /// <param name="count">The number of contacts</param>
     /// <returns><see langword="true"/> if successful</returns>
     [DllImport( "user32.dll", SetLastError = true )]
-    internal static extern bool InjectSyntheticPointerInput( nint device, [In] PointerTypeInfoTouch[] pti, uint count );
-
-    /// <summary>
-    /// <see href="https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-injectsyntheticpointerinput">
-    /// Win32 API Function</see>
-    /// Simulates pen input.
-    /// </summary>
-    /// <param name="device">The device that sends the touch.</param>
-    /// <param name="pti">An array of <see cref="PointerTypeInfoPen"/> representing injected pointers.
-    /// This should only ever contain one element.</param>
-    /// <param name="count">The number of contacts. This should always be 1</param>
-    /// <returns><see langword="true"/> if successful</returns>
-    [DllImport( "user32.dll", SetLastError = true )]
-    internal static extern bool InjectSyntheticPointerInput( nint device, [In] PointerTypeInfoPen[] pti, uint count );
+    internal static extern bool InjectSyntheticPointerInput( nint device, [In] PointerTypeInfo[] pti, uint count );
 
 
     /// <summary>
@@ -86,7 +73,7 @@ public static class Win32
     internal const int SM_XVIRTUALSCREEN = 76;
     internal const int SM_YVIRTUALSCREEN = 77;
 
-    internal static string Stringify( this PointerTypeInfoTouch[] pti )
+    internal static string Stringify( this PointerTypeInfo[] pti )
     {
         string result = "[";
 
@@ -107,7 +94,7 @@ public static class Win32
         return result + "]";
     }
 
-    internal static string Stringify( this PointerTypeInfoPen pti )
+    internal static string Stringify( this PointerTypeInfo pti )
     {
         string result = $@"
 {{
