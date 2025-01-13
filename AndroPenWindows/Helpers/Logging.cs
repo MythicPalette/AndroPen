@@ -17,15 +17,15 @@ internal static class Logging
         string path = Environment.GetFolderPath( Environment.SpecialFolder.MyDocuments );
         string file = Path.Combine( path, "AndroPen.log" );
 
-        if ( File.Exists( file ) )
-            File.Delete( file );
+        //if ( File.Exists( file ) )
+        //    File.Delete( file );
 
         _loggingThread = new(() =>
         {
             foreach ( string log in _queue.GetConsumingEnumerable() )
             {
                 Console.WriteLine( log );
-                File.AppendAllLines( file, [log] );
+                //File.AppendAllLines( file, [log] );
             }
         });
         _loggingThread.Start();
