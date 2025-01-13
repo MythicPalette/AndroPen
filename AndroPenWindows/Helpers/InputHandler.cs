@@ -11,6 +11,8 @@ public class InputHandler
     protected IntPtr _pen;
     protected IntPtr _touch;
 
+    private long _lastStamp = 0;
+
     // Constructor to initialize touch injection
     public InputHandler()
     {
@@ -131,15 +133,15 @@ public class InputHandler
         };
 
         /*
-         * For some reason, a pause is required here before injecting the pointer input.
-         * Without this pause, InjectSyntheticPointerInput will sometimes output the
-         * maximum pressure value. I'm not sure if this is an issue with pti not being
-         * assigned to fast enough or if it is an issue with InjectSyntheticPointerInput
-         * hitting a maximum polling rate or some kind. More testing is required.
-         * 
-         * TODO: Find a real solution for this issue.
+         * It appears that it's possible to break InjectSyntheticPointerInput if you send events
+         * with a delta time of 0 so we need to track the delta time and, if the current delta is
+         * 0, sleep for a single millisecond.
          */
-        Thread.Sleep( 1 );
+        long stamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();    // Get the current stamp
+        long delta = stamp - this._lastStamp;                           // Get the delta
+        this._lastStamp = stamp;                                        // Save the current time stamp
+        if( delta == 0 )
+            Thread.Sleep( 1 );
 
         if( !Win32.InjectSyntheticPointerInput( this._pen, [pti], 1 ) )
         {
