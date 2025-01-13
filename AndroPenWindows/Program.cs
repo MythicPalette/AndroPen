@@ -22,6 +22,7 @@ internal static class Program
 
         Logging.Init();
         socketManager.Start();
+        ExpressKeyHandler.Init();
         CreateIcon();
         mainForm = new();
 

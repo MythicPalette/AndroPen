@@ -3,19 +3,24 @@
 namespace AndroPen.Helpers;
 internal class EventProcessor
 {
-    internal const int DRAW_AREA_ID = 0;
-    internal const int SLIDER_1_ID = 1;
-    internal const int SLIDER_2_ID = 2;
     internal static void ProcessEvent(RemoteEvent re)
     {
+        RemotePointerInfo? ev = re.Touches.Count > 0 ? re.Touches[0] : re.Pen;
+
         switch( re.Sender )
         {
-            case DRAW_AREA_ID:
+            case 0: // The main drawing surface is zero.
                 ProcessDrawArea( re ); break;
-            case SLIDER_1_ID:
-                ProcessSlider1( re ); break;
-            case SLIDER_2_ID:
-                ProcessSlider2( re ); break;
+
+            case ExpressKeyHandler.SLIDER_1_ID:
+            case ExpressKeyHandler.SLIDER_2_ID: // 
+                ExpressKeyHandler.Slide( re.Sender, ev?.Velocity.Y < 0 );
+                break;
+
+            default:
+                if( ev is null )
+                    return;
+                ExpressKeyHandler.ProcessEKey( re.Sender, ev.EvType ); break;
         }
     }
 
@@ -28,38 +33,5 @@ internal class EventProcessor
         // Simulate pen if necessary.
         if( re.Pen != null )
             Program.inputHandler.SimulatePen( re.Pen );
-    }
-
-    protected static void ProcessSlider1( RemoteEvent re )
-    {
-        RemotePointerInfo? ev = re.Touches.Count > 0 ? re.Touches[0] : re.Pen;
-        if( ev is null )
-            return;
-
-        if( ev.Velocity.Y == 0 )
-            return;
-        else if( ev?.Velocity.Y > 0 ) // A positive velocity means going down.
-            InputHandler.SimulateKeyPress( '['.GetVirtualKeyCode() );
-        else
-            InputHandler.SimulateKeyPress( ']'.GetVirtualKeyCode() );
-    }
-
-    protected static void ProcessSlider2( RemoteEvent re )
-    {
-        RemotePointerInfo? ev = re.Touches.Count > 0 ? re.Touches[0] : re.Pen;
-        if( ev is null )
-            return;
-
-
-        if( ev.Velocity.Y == 0 )
-            return;
-
-        InputHandler.SimulateKeyDown( 0x11 );
-        if( ev?.Velocity.Y > 0 ) // A positive velocity means going down.
-            InputHandler.SimulateKeyPress( '['.GetVirtualKeyCode() );
-        else
-            InputHandler.SimulateKeyPress( ']'.GetVirtualKeyCode() );
-
-        InputHandler.SimulateKeyUp( 0x11 );
     }
 }

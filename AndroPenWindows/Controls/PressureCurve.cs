@@ -5,6 +5,14 @@ using AndroPen.Helpers;
 
 namespace AndroPen.Controls;
 
+public enum ModifierKey
+{
+    None = 0x00,
+    Shift = 0x10, // SHIFT key
+    Control = 0x11, // CTRL key
+    Alt = 0x12, // ALT key (also known as the Menu key)
+}
+
 public class PressureCurve : Control
 {
     public event EventHandler? PressureCurveChanged;

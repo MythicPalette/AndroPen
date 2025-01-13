@@ -148,10 +148,8 @@ class TouchSliderView : View {
 
         // Get the action type and pass it to the pointer info.
         when (action) {
-            MotionEvent.ACTION_DOWN -> eventPoint = PointF(ev.x, ev.y)
-            MotionEvent.ACTION_POINTER_DOWN -> eventPoint = PointF(ev.x, ev.y)
-            MotionEvent.ACTION_UP -> eventPoint = null
-            MotionEvent.ACTION_POINTER_UP -> eventPoint = null
+            MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN -> eventPoint = PointF(ev.x, ev.y)
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> eventPoint = null
             MotionEvent.ACTION_MOVE -> {
                 if ( this.orientation == Orientation.Vertical ) {
                     if ( evPoint == null ) return true
@@ -166,11 +164,11 @@ class TouchSliderView : View {
                      */
                     pi.velocityY = if( ev.y > evPoint.y ) 1f else -1f
                     this.eventPoint = PointF(ev.x, ev.y)
+                    this.onTouch(this.SenderId, pi)
                 }
             }
         }
 
-        this.onTouch(this.SenderId, pi)
         return true
     }
 

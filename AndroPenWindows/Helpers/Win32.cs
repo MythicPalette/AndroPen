@@ -3,6 +3,14 @@ using AndroPen.Data;
 
 namespace AndroPen.Helpers;
 
+public enum ModifierKey
+{
+    None = 0x00,
+    Shift = 0x10, // SHIFT key
+    Control = 0x11, // CTRL key
+    Alt = 0x12, // ALT key (Menu key)
+}
+
 public static class Win32
 {
     // Constants for Touch Injection API
