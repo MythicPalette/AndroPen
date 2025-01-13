@@ -12,13 +12,26 @@ import com.mythicpalette.andropen.data.PointerInfo
 import com.mythicpalette.andropen.data.toPointerInfo
 import com.mythicpalette.andropen.helpers.Settings
 
-class ExpressKey @JvmOverloads constructor(
-    context: Context, attrs: AttributeSet? = null
-) : View(context, attrs) {
+class ExpressKey: View {
     var onTouch: (Int, PointerInfo) -> Unit = { _, _ ->}
 
     var SenderId: Int = 0
 
+
+    constructor(context: Context) : super(context) {
+    }
+
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
+        init(attrs)
+    }
+
+    constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(
+        context,
+        attrs,
+        defStyle
+    ) {
+        init(attrs)
+    }
 
 
     private fun init(attrs: AttributeSet) {
@@ -53,6 +66,10 @@ class ExpressKey @JvmOverloads constructor(
         val stamp = System.currentTimeMillis()
         val viewWidth = this.width
         val viewHeight = this.height
+
+        val action = ev.actionMasked
+        if ( action == MotionEvent.ACTION_MOVE )
+            return true
 
         // Iterate over all pointers to handle pen input (pressure, movement, etc.)
         val pi = ev.toPointerInfo(0, stamp, viewWidth, viewHeight )

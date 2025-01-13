@@ -33,7 +33,7 @@ internal class ExpressKey
         Down();
     }
 
-    internal void Up()
+    internal void Down()
     {
         // Press down any modifier keys that are specified.
         if( this.Control )
@@ -47,7 +47,7 @@ internal class ExpressKey
             InputHandler.SimulateKeyDown( this.KeyCode );
     }
 
-    internal void Down()
+    internal void Up()
     {
         if( this.KeyCode != 0 )
             InputHandler.SimulateKeyUp( this.KeyCode );
