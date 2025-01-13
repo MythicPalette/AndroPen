@@ -26,18 +26,7 @@ public class InputHandler
         PointerTypeInfo[] outData = new PointerTypeInfo[ rpis.Length ];
         for( int i = 0; i < rpis.Length; i++ )// (RemotePointerInfo rp in rpis)
         {
-            PointerFlags pointerFlags;
-            if( rpis[i].EvType is AndroidEventType.Down or AndroidEventType.PointerDown )
-                pointerFlags = PointerFlags.Down | PointerFlags.InRange | PointerFlags.InContact;
-
-            else if( rpis[i].EvType is AndroidEventType.Move )
-                pointerFlags = PointerFlags.Update | PointerFlags.InRange | PointerFlags.InContact;
-
-            else
-                pointerFlags = PointerFlags.Up;
-
-            if( rpis[i].PointerId > 0 )
-                pointerFlags |= PointerFlags.New;
+            PointerFlags pointerFlags = AssembleFlags(rpis[i]);
 
             Point point = rpis[i].Translate( ScreenUtils.GetNamedBounds( Settings.ScreenDevice ));
 
@@ -72,48 +61,14 @@ public class InputHandler
             };
         }
 
-        /*
-         * It appears that it's possible to break InjectSyntheticPointerInput if you send events
-         * with a delta time of 0 so we need to track the delta time and, if the current delta is
-         * 0, sleep for a single millisecond.
-         */
-        long stamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();    // Get the current stamp
-        long delta = stamp - this._lastStamp;                           // Get the delta
-        this._lastStamp = stamp;                                        // Save the current time stamp
-        if( delta == 0 )
-            Thread.Sleep( 1 );
-
-        int sizeOf = Marshal.SizeOf<PointerTouchInfo>();
-        int sizOf2 = Marshal.SizeOf<PointerPenInfo>();
-        if( !Win32.InjectSyntheticPointerInput( this._touch, outData, (uint)outData.Length ) )
-            Logging.Error( "Failed to inject touch input: " + Marshal.GetLastWin32Error() );
+        SafelyInjectSyntheticPointerInput( this._touch, outData );
     }
 
     // Simulate a pen input with pressure and tilt
     public void SimulatePen( RemotePointerInfo rpi )
     {
         // Prepare the flags
-        PointerFlags pFlags = PointerFlags.None;
-
-        // If the pointer has just gone down
-        if( rpi.EvType is AndroidEventType.Down or AndroidEventType.PointerDown )
-            pFlags = PointerFlags.Down | PointerFlags.InRange | PointerFlags.InContact;
-
-        // The pointer is moving across the surface.
-        else if( rpi.EvType is AndroidEventType.Move )
-            pFlags = PointerFlags.Update | PointerFlags.InRange | PointerFlags.InContact;
-
-        // On Hover enter it is in range but not down or in contact
-        else if( rpi.EvType is AndroidEventType.HoverEnter )
-            pFlags |= PointerFlags.InRange;
-
-        // Update the position of the cursor 
-        else if( rpi.EvType is AndroidEventType.HoverMove )
-            pFlags |= PointerFlags.Update | PointerFlags.InRange;
-
-        // This is when it leaves hover and/or stops touching.
-        else
-            pFlags = PointerFlags.Up;
+        PointerFlags pFlags = AssembleFlags(rpi);
 
         // Prepare the pen mask
         PenMask pMask = PenMask.TiltX | PenMask.TiltY;
@@ -149,23 +104,63 @@ public class InputHandler
          * with a delta time of 0 so we need to track the delta time and, if the current delta is
          * 0, sleep for a single millisecond.
          */
+        SafelyInjectSyntheticPointerInput( this._pen, [pti] );
+        this.PenInput?.Invoke( new((int)rpi.PixelPosition.X, (int)rpi.PixelPosition.Y), rpi.Pressure, outPressure );
+    }
+
+    private PointerFlags AssembleFlags( RemotePointerInfo rpi )
+    {
+        PointerFlags pointerFlags = PointerFlags.None;
+        if( rpi.EvType is AndroidEventType.Down or AndroidEventType.PointerDown )
+        {
+            pointerFlags = PointerFlags.Down | PointerFlags.InRange | PointerFlags.InContact;
+
+            if( rpi.PointerId > 0 )
+                pointerFlags |= PointerFlags.New;
+        }
+        else if( rpi.EvType is AndroidEventType.Move )
+        {
+            pointerFlags = PointerFlags.Update | PointerFlags.InRange | PointerFlags.InContact;
+        }
+
+        // On Hover enter it is in range but not down or in contact
+        else if( rpi.EvType is AndroidEventType.HoverEnter )
+        {
+            pointerFlags = PointerFlags.InRange;
+            if( rpi.PointerId > 0 )
+                pointerFlags |= PointerFlags.New;
+        }
+
+        // Update the position of the cursor 
+        else if( rpi.EvType is AndroidEventType.HoverMove )
+        {
+            pointerFlags |= PointerFlags.Update | PointerFlags.InRange;
+        }
+
+        else
+            pointerFlags = PointerFlags.Up;
+
+        return pointerFlags;
+    }
+
+    private void SafelyInjectSyntheticPointerInput( nint device, PointerTypeInfo[] outData )
+    {
+        /*
+         * It appears that it's possible to break InjectSyntheticPointerInput if you send events
+         * with a delta time of 0 so we need to track the delta time and, if the current delta is
+         * 0, sleep for a single millisecond.
+         */
         long stamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();    // Get the current stamp
         long delta = stamp - this._lastStamp;                           // Get the delta
         this._lastStamp = stamp;                                        // Save the current time stamp
         if( delta == 0 )
             Thread.Sleep( 1 );
 
-        if( !Win32.InjectSyntheticPointerInput( this._pen, [pti], 1 ) )
-        {
-            int errorCode = Marshal.GetLastWin32Error();
-            Logging.Error( $"Pen input failed. Last error code: {errorCode}" );
-            return;
-        }
-        else
-            this.PenInput?.Invoke( new((int)rpi.PixelPosition.X, (int)rpi.PixelPosition.Y), rpi.Pressure, outPressure );
+        if( !Win32.InjectSyntheticPointerInput( device, outData, (uint)outData.Length ) )
+            Logging.Error( "Failed to inject touch input: " + Marshal.GetLastWin32Error() );
     }
 
-    public static float GetPressureValue( float InputPressure )
+    private static float GetPressureValue( float InputPressure )
     {
         // If input is below PressureStart.X, return 0
         if( InputPressure < Settings.ActivationThreshold )
