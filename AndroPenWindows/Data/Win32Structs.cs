@@ -92,20 +92,21 @@ internal enum PointerFeedbackMode : uint
 }
 
 #region POINTER_TYPE_INFO
-/*
- * Because C# does not have the UNION function for structs like C does,
- * the two variations of POINTER_TYPE_INFO are instead declared as
- * two different structs.
- */
 /// <summary>
 /// <see href="https://learn.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-pointer_type_info">POINTER_TYPE_INFO</see>
 /// struct from the official Win32 API. This is the touch variation
 /// </summary>
-[StructLayout( LayoutKind.Sequential )]
-internal struct PointerTypeInfoTouch
+[StructLayout( LayoutKind.Explicit, Pack = 1 )]
+internal struct PointerTypeInfo
 {
+    [FieldOffset(0)]
     public PointerInputType type;
+
+    [FieldOffset(8)]
     public PointerTouchInfo touchInfo;
+
+    [FieldOffset(8)]
+    public PointerPenInfo penInfo;
 }
 
 /// <summary>
@@ -131,7 +132,10 @@ internal struct PointerTouchInfo
 [Flags]
 internal enum TouchFlags : uint
 {
-    None = 0x00000000
+    None = 0x00000000,     // No flags
+    Barrel = 0x1,   // Barrel button is pressed
+    Invert = 0x2,   // The pen is inverted
+    Eraser = 0x4    // The eraser button is pressed
 }
 
 /// <summary>
@@ -149,17 +153,6 @@ internal enum TouchMask : uint
 }
 
 /// <summary>
-/// <see href="https://learn.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-pointer_type_info">POINTER_TYPE_INFO</see>
-/// struct from the official Win32 API. This is the pen variation
-/// </summary>
-[StructLayout( LayoutKind.Sequential )]
-internal struct PointerTypeInfoPen
-{
-    public PointerInputType type;
-    public PointerPenInfo penInfo;
-}
-
-/// <summary>
 /// <see href="https://learn.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-pointer_pen_info">POINTER_PEN_INFO</see>
 /// struct from the official Win32 API.
 /// </summary>
@@ -167,25 +160,12 @@ internal struct PointerTypeInfoPen
 internal struct PointerPenInfo
 {
     public PointerInfo pointerInfo;
-    public PenFlags penFlags;
+    public TouchFlags penFlags;
     public PenMask penMask;
     public uint pressure;
     public uint rotation;
     public int tiltX;
     public int tiltY;
-}
-
-/// <summary>
-/// <see href="https://learn.microsoft.com/en-us/windows/win32/inputmsg/touch-flags-constants">Pen Flags</see>
-/// flags from the official Win32 API. Used to indicate pen states.
-/// </summary>
-[Flags]
-public enum PenFlags : uint
-{
-    None = 0x0,     // No flags
-    Barrel = 0x1,   // Barrel button is pressed
-    Invert = 0x2,   // The pen is inverted
-    Eraser = 0x4    // The eraser button is pressed
 }
 
 /// <summary>
