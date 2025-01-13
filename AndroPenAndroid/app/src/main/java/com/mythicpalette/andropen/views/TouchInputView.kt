@@ -62,15 +62,15 @@ class TouchInputView : View {
         // Read custom attributes
         context.theme.obtainStyledAttributes(
             attrs,
-            R.styleable.BaseTouchView,
+            R.styleable.TouchInputView,
             0, 0
         ).apply {
             try {
-                SenderId = getInt(R.styleable.BaseTouchView_senderId, 0)
-                val strokeWidth = getDimension(R.styleable.BaseTouchView_strokeWidth, 4f)
-                val borderColor = getColor(R.styleable.BaseTouchView_borderColor, Color.WHITE)
-                borderCoverage = getFloat(R.styleable.BaseTouchView_borderCoverage, 1f)
-                borderCoverStyle = BorderCoverStyle.fromValue(getInt(R.styleable.BaseTouchView_borderCoverageStyle, 0))
+                SenderId = getInt(R.styleable.TouchInputView_senderId, 0)
+                val strokeWidth = getDimension(R.styleable.TouchInputView_strokeWidth, 4f)
+                val borderColor = getColor(R.styleable.TouchInputView_borderColor, Color.WHITE)
+                borderCoverage = getFloat(R.styleable.TouchInputView_borderCoverage, 1f)
+                borderCoverStyle = BorderCoverStyle.fromValue(getInt(R.styleable.TouchInputView_borderCoverageStyle, 0))
 
                 borderPaint.apply {
                     color = borderColor
