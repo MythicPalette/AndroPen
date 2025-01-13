@@ -1,6 +1,5 @@
 <resources>
-
-    <style name="Widget.Theme.AndPen.MyView" parent="">
+    <style name="Widget.Theme.AndroPen.MyView" parent="">
         <item name="android:background">@color/gray_400</item>
     </style>
 </resources>

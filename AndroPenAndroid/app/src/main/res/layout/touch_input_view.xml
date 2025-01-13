@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.mythicpalette.andropen.TouchInputView
-        style="@style/Widget.Theme.AndPen.MyView"
+    <com.mythicpalette.andropen.views.TouchInputView
+        style="@style/Widget.Theme.AndroPen.MyView"
         android:layout_width="300dp"
         android:layout_height="300dp"/>
 </FrameLayout>

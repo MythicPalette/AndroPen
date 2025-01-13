@@ -5,8 +5,6 @@
     android:layout_height="match_parent"
     android:background="@color/black">
 
-    <!-- GestureScreen view (e.g., a custom view or a placeholder for your screen) -->
-    <!-- Adding a light gray border around the FrameLayout -->
     <com.mythicpalette.andropen.views.SignalButton
         android:id="@+id/reconnect_button"
         android:layout_width="32dp"

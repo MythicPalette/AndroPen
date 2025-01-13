@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
 
         socketHandler.addListener(object: SocketStateListener {
             override fun onConnectionStateChanged(state: ConnectionState) {
-                findViewById<SignalButton>(R.id.reconnect_button).connected = state.Connected
+                findViewById<SignalButton>(R.id.reconnect_button).buttonOn = state.Connected
                 if ( state.Connected ) println("Connected")
                 else println("Disconnected")
             }

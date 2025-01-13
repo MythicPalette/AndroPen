@@ -16,20 +16,21 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-/**
- * TODO: document your custom view class.
- */
 enum class BorderCoverStyle(val value: Int) {
     Shortest(0), Longest(1), Independent(2);
 
     companion object {
         fun fromValue(value: Int): BorderCoverStyle {
-            return values().find { it.value == value }
+            return entries.find { it.value == value }
                 ?: throw IllegalArgumentException("Invalid value for BorderStyle: $value")
         }
     }
 }
 
+/*
+ * The TouchInputView takes touch and pen input and turns it into transmittable data for
+ * sending to the companion program on Windows.
+ */
 class TouchInputView : View {
     private var penHover: Boolean = false
     private var penDown: Boolean = false
