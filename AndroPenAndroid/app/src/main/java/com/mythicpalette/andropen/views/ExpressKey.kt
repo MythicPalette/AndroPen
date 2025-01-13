@@ -5,13 +5,20 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import com.mythicpalette.andropen.R
+import com.mythicpalette.andropen.data.PointerInfo
+import com.mythicpalette.andropen.data.toPointerInfo
+import com.mythicpalette.andropen.helpers.Settings
 
 class ExpressKey @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
 ) : View(context, attrs) {
+    var onTouch: (Int, PointerInfo) -> Unit = { _, _ ->}
+
     var SenderId: Int = 0
+
 
 
     private fun init(attrs: AttributeSet) {
@@ -40,5 +47,17 @@ class ExpressKey @JvmOverloads constructor(
             0f, 0f, this.width.toFloat(), this.height.toFloat(),
             borderPaint
         )
+    }
+
+    override fun onTouchEvent(ev: MotionEvent): Boolean {
+        val stamp = System.currentTimeMillis()
+        val viewWidth = this.width
+        val viewHeight = this.height
+
+        // Iterate over all pointers to handle pen input (pressure, movement, etc.)
+        val pi = ev.toPointerInfo(0, stamp, viewWidth, viewHeight )
+
+        this.onTouch(this.SenderId, pi)
+        return true
     }
 }

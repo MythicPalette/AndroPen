@@ -103,6 +103,7 @@
             android:layout_height="16dp" />
 
         <com.mythicpalette.andropen.views.ExpressKey
+            android:id="@+id/ekey01"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:minWidth="32dp"

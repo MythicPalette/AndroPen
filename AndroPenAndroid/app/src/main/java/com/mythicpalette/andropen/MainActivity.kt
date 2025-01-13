@@ -14,6 +14,7 @@ import com.mythicpalette.andropen.helpers.Settings
 import com.mythicpalette.andropen.helpers.SettingsEventListener
 import com.mythicpalette.andropen.helpers.SocketHandler
 import com.mythicpalette.andropen.helpers.SocketStateListener
+import com.mythicpalette.andropen.views.ExpressKey
 import com.mythicpalette.andropen.views.SignalButton
 import com.mythicpalette.andropen.views.TouchInputView
 import com.mythicpalette.andropen.views.TouchSliderView
@@ -73,6 +74,11 @@ class MainActivity : AppCompatActivity() {
         val slider2 = findViewById<TouchSliderView>(R.id.dragSlider2)
         slider2.sensitivity = Settings.Slider2Sensitivity
         slider2.onTouch = { id, info ->
+            onSingleTouch(id, info)
+        }
+
+        val eKey1 = findViewById<ExpressKey>(R.id.ekey01)
+        eKey1.onTouch = { id, info ->
             onSingleTouch(id, info)
         }
 
