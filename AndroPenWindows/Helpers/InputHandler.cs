@@ -185,47 +185,6 @@ public class InputHandler
     // Softness factor influences the curve. If softnessY > softnessX, the curve will be more pronounced.
     private static float ApplySoftnessCurve( float normalizedInput, float softnessX, float softnessY ) =>
         (float)Math.Pow( normalizedInput, softnessY );
-
-    public static void SimulateKeyPress( ushort virtualKeyCode )
-    {
-        INPUT down = new()
-        {
-            Type = Win32.INPUT_KEYBOARD,
-            Data = new()
-            {
-                Keyboard = new()
-                {
-                    KeyCode = virtualKeyCode,
-                    Scan = 0,
-                    Flags = 0,
-                    ExtraInfo = IntPtr.Zero
-                }
-            }
-        };
-
-        INPUT up = new()
-        {
-            Type = Win32.INPUT_KEYBOARD,
-            Data = new()
-            {
-                Keyboard = new()
-                {
-                    KeyCode = virtualKeyCode,
-                    Scan = 0,
-                    Flags = Win32.KEYEVENTF_KEYUP,
-                    ExtraInfo = IntPtr.Zero
-                }
-            }
-        };
-
-        // Send both events
-        INPUT[] inputs = { down, up };
-        if( Win32.SendInput( (uint)inputs.Length, inputs, Marshal.SizeOf( typeof( INPUT ) ) ) == 0 )
-        {
-            //throw new Exception( "Failed to send input." );
-            Logging.Error($"Failed to send input. Err: ${Marshal.GetHRForLastWin32Error()}");
-        }
-    }
     public static void SimulateKeyDown( ushort virtualKeyCode )
     {
 
