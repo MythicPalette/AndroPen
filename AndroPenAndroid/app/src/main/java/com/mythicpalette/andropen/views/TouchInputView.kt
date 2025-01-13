@@ -171,6 +171,10 @@ class TouchInputView : View {
                 }
 
                 MotionEvent.TOOL_TYPE_FINGER -> {
+                    // If touch is completely disabled, don't allow finger touches.
+                    if ( Settings.TouchDisabled )
+                        return true
+
                     // If the pen is in use and the event is not UP or Pointer UP then ignore it
                     if (
                         Settings.PenBlocksTouch

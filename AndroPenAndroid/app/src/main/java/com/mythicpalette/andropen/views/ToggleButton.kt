@@ -18,9 +18,6 @@ import com.mythicpalette.andropen.R
  */
 open class ToggleButton : androidx.appcompat.widget.AppCompatButton {
 
-    /**
-     * The text to draw
-     */
     var buttonOn: Boolean = false
         set(value) {
             field = value
@@ -67,6 +64,7 @@ open class ToggleButton : androidx.appcompat.widget.AppCompatButton {
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
+
         // Initialize the dimensions
         this.barStep = (this.width * 0.25).toInt()
         this.barWidth = (this.width * 0.2).toInt()

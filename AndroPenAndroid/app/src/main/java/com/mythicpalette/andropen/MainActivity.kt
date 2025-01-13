@@ -17,6 +17,7 @@ import com.mythicpalette.andropen.helpers.SocketStateListener
 import com.mythicpalette.andropen.views.SignalButton
 import com.mythicpalette.andropen.views.TouchInputView
 import com.mythicpalette.andropen.views.TouchSliderView
+import com.mythicpalette.andropen.views.TouchToggleButton
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
@@ -44,20 +45,16 @@ class MainActivity : AppCompatActivity() {
             }
         })
         socketHandler.connectToSocket(this);
-        findViewById<View>(R.id.reconnect_button).setOnTouchListener{ v, ev ->
-            when (ev.actionMasked) {
-                MotionEvent.ACTION_UP -> {
-                    socketHandler.connectToSocket(this);
-                    true
-                }
-                else -> {
-                    true
-                }
-            }
+        findViewById<View>(R.id.reconnect_button).setOnClickListener{ v ->
+            socketHandler.connectToSocket(this);
         }
 
+        val touchDisable = findViewById<TouchToggleButton>(R.id.touch_disable_button)
+        touchDisable.buttonOn = !Settings.TouchDisabled
+        touchDisable.setOnClickListener{_ ->
+            Settings.setTouchDisabled(this, !Settings.TouchDisabled)
+        }
         val drawArea =  findViewById<TouchInputView>(R.id.drawArea)
-
 
         drawArea.onTouch = { id, infos ->
             onMultiTouch(id, infos)
@@ -83,6 +80,7 @@ class MainActivity : AppCompatActivity() {
             override fun onSettingsChanged() {
                 slider1.sensitivity = Settings.Slider1Sensitivity
                 slider2.sensitivity = Settings.Slider2Sensitivity
+                touchDisable.buttonOn = !Settings.TouchDisabled
             }
         }
 
