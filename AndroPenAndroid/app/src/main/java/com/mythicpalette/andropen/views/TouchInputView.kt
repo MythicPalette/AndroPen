@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Path
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
@@ -32,19 +33,20 @@ enum class BorderCoverStyle(val value: Int) {
  * sending to the companion program on Windows.
  */
 class TouchInputView : View {
-    private var penHover: Boolean = false
-    private var penDown: Boolean = false
-    private var touchDown: Boolean = false
+    private var _penHover: Boolean = false
+    private var _penDown: Boolean = false
+    private var _touchDown: Boolean = false
 
     var onTouch: (Int, MutableList<PointerInfo>) -> Unit = {_, _ ->}
     var onHover: (Int, PointerInfo) -> Unit = {_, _ ->}
 
-    var borderCoverStyle: BorderCoverStyle = BorderCoverStyle.Shortest
-    var borderCoverage: Float = 1f
+    private var _borderColor: Int = Color.WHITE
+    private var _borderCoverStyle: BorderCoverStyle = BorderCoverStyle.Shortest
+    private var _borderCoverage: Float = 1f
 
     var SenderId: Int = 0
 
-    private var lastTouches: MutableList<PointerInfo> = mutableListOf()
+    private var _lastTouches: MutableList<PointerInfo> = mutableListOf()
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
         init(attrs)
@@ -68,12 +70,12 @@ class TouchInputView : View {
             try {
                 SenderId = getInt(R.styleable.TouchInputView_senderId, 0)
                 val strokeWidth = getDimension(R.styleable.TouchInputView_strokeWidth, 4f)
-                val borderColor = getColor(R.styleable.TouchInputView_borderColor, Color.WHITE)
-                borderCoverage = getFloat(R.styleable.TouchInputView_borderCoverage, 1f)
-                borderCoverStyle = BorderCoverStyle.fromValue(getInt(R.styleable.TouchInputView_borderCoverageStyle, 0))
+                _borderColor = getColor(R.styleable.TouchInputView_borderColor, Color.WHITE)
+                _borderCoverage = getFloat(R.styleable.TouchInputView_borderCoverage, 1f)
+                _borderCoverStyle = BorderCoverStyle.fromValue(getInt(R.styleable.TouchInputView_borderCoverageStyle, 0))
 
                 borderPaint.apply {
-                    color = borderColor
+                    color = _borderColor
                     this.strokeWidth = strokeWidth
                     style = Paint.Style.STROKE
                 }
@@ -90,7 +92,6 @@ class TouchInputView : View {
         style = Paint.Style.STROKE
     }
 
-    //private val path = android.graphics.Path()
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -98,13 +99,13 @@ class TouchInputView : View {
         val cornerX: Float = this.width.toFloat()
         val cornerY: Float = this.height.toFloat()
 
-        if ( this.borderCoverage == 0f )
+        if ( this._borderCoverage == 0f )
             return
 
-        var vLen = this.height*(this.borderCoverage * 0.5f)
-        var hLen = this.width*(this.borderCoverage * 0.5f)
+        var vLen = this.height*(this._borderCoverage * 0.5f)
+        var hLen = this.width*(this._borderCoverage * 0.5f)
 
-        if ( this.borderCoverStyle == BorderCoverStyle.Shortest )
+        if ( this._borderCoverStyle == BorderCoverStyle.Shortest )
         {
             // If we're using the shortest side then find the shorter value and duplicate
             if ( vLen < hLen )
@@ -112,7 +113,7 @@ class TouchInputView : View {
             else
                 vLen = hLen
         }
-        else if ( this.borderCoverStyle == BorderCoverStyle.Longest )
+        else if ( this._borderCoverStyle == BorderCoverStyle.Longest )
         {
             // If we're using the longest side then find the longer value and duplicate
             if ( vLen > hLen )
@@ -139,7 +140,6 @@ class TouchInputView : View {
     }
 
     override fun onTouchEvent(ev: MotionEvent): Boolean {
-
         val infos: MutableList<PointerInfo> = mutableListOf()
         val action = ev.actionMasked
         val stamp = System.currentTimeMillis()
@@ -151,7 +151,7 @@ class TouchInputView : View {
             val pi = ev.toPointerInfo(i, stamp, viewWidth, viewHeight )
 
             // Check if the pointer has a previous track
-            for( prev in lastTouches ) {
+            for( prev in _lastTouches ) {
                 if ( prev.pointerId == pi.pointerId ) { // Found a match
                     // Get the difference between locations.
                     pi.velocityX = pi.x - prev.x
@@ -163,10 +163,10 @@ class TouchInputView : View {
             when (pi.pointerType) {
                 MotionEvent.TOOL_TYPE_STYLUS -> {
                     when (action) {
-                        MotionEvent.ACTION_DOWN -> penDown = true
-                        MotionEvent.ACTION_POINTER_DOWN -> penDown = true
-                        MotionEvent.ACTION_UP -> penDown = false
-                        MotionEvent.ACTION_POINTER_UP -> penDown = false
+                        MotionEvent.ACTION_DOWN,
+                        MotionEvent.ACTION_POINTER_DOWN -> _penDown = true
+                        MotionEvent.ACTION_UP,
+                        MotionEvent.ACTION_POINTER_UP -> _penDown = false
                     }
                 }
 
@@ -178,46 +178,32 @@ class TouchInputView : View {
                     // If the pen is in use and the event is not UP or Pointer UP then ignore it
                     if (
                         Settings.PenBlocksTouch
-                        && ( penHover || penDown )
+                        && ( _penHover || _penDown )
                         && (action != MotionEvent.ACTION_UP && action != MotionEvent.ACTION_POINTER_UP))
                         continue
 
                     // Finger touch detected (tap or gesture)
                     when (action) {
-                        MotionEvent.ACTION_DOWN -> touchDown = true
-                        MotionEvent.ACTION_POINTER_DOWN -> touchDown = true
-                        MotionEvent.ACTION_UP -> touchDown = false
-                        MotionEvent.ACTION_POINTER_UP -> touchDown = false
+                        MotionEvent.ACTION_DOWN -> _touchDown = true
+                        MotionEvent.ACTION_POINTER_DOWN -> _touchDown = true
+                        MotionEvent.ACTION_UP -> _touchDown = false
+                        MotionEvent.ACTION_POINTER_UP -> _touchDown = false
                     }
                 }
                 else -> {}
             }
             infos.add(pi)
         }
-        this.lastTouches = infos
+        this._lastTouches = infos
         this.onTouch(this.SenderId, infos)
         return true
-        //
-        //
-        //
-//        when (event.action) {
-//            MotionEvent.ACTION_DOWN -> {
-//                path.moveTo(event.x, event.y)
-//                return true
-//            }
-//            MotionEvent.ACTION_MOVE -> {
-//                path.lineTo(event.x, event.y)
-//                invalidate() // Redraw the view
-//            }
-//        }
-//        return super.onTouchEvent(event)
     }
 
     override fun onHoverEvent(ev: MotionEvent): Boolean {
         val pi = ev.toPointerInfo(0, System.currentTimeMillis(), this.width, this.height )
 
         when (pi.eventType) {
-            MotionEvent.ACTION_HOVER_ENTER -> penHover = true
+            MotionEvent.ACTION_HOVER_ENTER -> _penHover = true
             MotionEvent.ACTION_HOVER_EXIT -> {
                 /*
                  Run the HOVER_EXIT event on a delay to prevent sending "HOVER_EXIT" event before
@@ -226,12 +212,12 @@ class TouchInputView : View {
                  */
                 CoroutineScope(Dispatchers.IO).launch{
                     delay(500)
-                    if ( penDown ) return@launch
+                    if ( _penDown ) return@launch
 
                     // Upon reaching this code, the pen has left range.
-                    penHover = false
-                    lastTouches.clear()
-                    lastTouches.add(pi)
+                    _penHover = false
+                    _lastTouches.clear()
+                    _lastTouches.add(pi)
                     onHover(SenderId, pi);
                 }
 
@@ -240,14 +226,9 @@ class TouchInputView : View {
             }
         }
 
-        this.lastTouches.clear()
-        this.lastTouches.add(pi)
+        this._lastTouches.clear()
+        this._lastTouches.add(pi)
         this.onHover(this.SenderId, pi);
         return true
-    }
-
-    fun clearCanvas() {
-        //path.reset()
-        invalidate() // Redraw the view
     }
 }
