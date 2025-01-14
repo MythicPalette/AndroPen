@@ -10,12 +10,11 @@ import android.view.View
 import com.mythicpalette.andropen.R
 import com.mythicpalette.andropen.data.PointerInfo
 import com.mythicpalette.andropen.data.toPointerInfo
-import com.mythicpalette.andropen.helpers.Settings
 
 class ExpressKey: View {
     var onTouch: (Int, PointerInfo) -> Unit = { _, _ ->}
 
-    var SenderId: Int = 0
+    var senderId: Int = 0
 
 
     constructor(context: Context) : super(context) {
@@ -42,7 +41,7 @@ class ExpressKey: View {
             0, 0
         ).apply {
             try {
-                SenderId = getInt(R.styleable.BaseTouchView_senderId, 0)
+                senderId = getInt(R.styleable.BaseTouchView_senderId, 0)
             } finally {
                 recycle()
             }
@@ -74,7 +73,7 @@ class ExpressKey: View {
         // Iterate over all pointers to handle pen input (pressure, movement, etc.)
         val pi = ev.toPointerInfo(0, stamp, viewWidth, viewHeight )
 
-        this.onTouch(this.SenderId, pi)
+        this.onTouch(this.senderId, pi)
         return true
     }
 }

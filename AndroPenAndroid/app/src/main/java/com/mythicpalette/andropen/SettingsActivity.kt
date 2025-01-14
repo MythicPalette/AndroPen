@@ -12,18 +12,24 @@ import androidx.core.view.WindowInsetsCompat
 import com.mythicpalette.andropen.helpers.Settings
 
 class SettingsActivity : AppCompatActivity() {
-    private val SLIDER_MULTIPLIER = 1000f
+    companion object {
+        private const val SLIDER_MULTIPLIER = 1000f
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_settings)
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
+        /*
+            Get each of the settings and set the values the current settings.
+         */
         findViewById<EditText>(R.id.ip_text).setText(Settings.IpAddress)
         findViewById<EditText>(R.id.port_text).setText(Settings.Port.toString())
         findViewById<SwitchCompat>(R.id.touch_switch).isChecked = Settings.PenBlocksTouch
@@ -36,6 +42,7 @@ class SettingsActivity : AppCompatActivity() {
         s1.progress = s1Sense.toInt()
         s2.progress = s2Sense.toInt()
 
+        // Set the save and cancel button listeners.
         findViewById<AppCompatButton>(R.id.settings_save_button).setOnClickListener{ _ ->
             onSave()
             onBackPressedDispatcher.onBackPressed()
@@ -46,16 +53,20 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun onSave() {
+        // Get all of the data from each of the UI elements.
         val ip = findViewById<EditText>(R.id.ip_text).text.toString()
         val port = findViewById<EditText>(R.id.port_text).text.toString().toInt()
         val penTouch = findViewById<SwitchCompat>(R.id.touch_switch).isChecked
 
+        // Slider 1
         val s1 = findViewById<SeekBar>(R.id.sensitivity1)
         val s1Sense = (s1.max - s1.progress + s1.min) / SLIDER_MULTIPLIER
 
+        // Slider 2
         val s2 = findViewById<SeekBar>(R.id.sensitivity2)
         val s2Sense = (s2.max - s2.progress + s2.min) / SLIDER_MULTIPLIER
 
+        // Save all of the data.
         Settings.set(
             this,
             ip=ip,

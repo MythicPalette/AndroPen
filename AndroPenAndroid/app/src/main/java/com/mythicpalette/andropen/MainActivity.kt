@@ -3,7 +3,6 @@ package com.mythicpalette.andropen
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
@@ -23,13 +22,7 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 class MainActivity : AppCompatActivity() {
-    private var socketHandler: SocketHandler = SocketHandler();
-
-    companion object {
-        const val DRAW_AREA_ID = 0
-        const val SLIDER_1_ID = 1
-        const val SLIDER_2_ID = 2
-    }
+    private var _socketHandler: SocketHandler = SocketHandler()
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,16 +31,16 @@ class MainActivity : AppCompatActivity() {
 
         Settings.init(this)
 
-        socketHandler.addListener(object: SocketStateListener {
+        _socketHandler.addListener(object: SocketStateListener {
             override fun onConnectionStateChanged(state: ConnectionState) {
-                findViewById<SignalButton>(R.id.reconnect_button).buttonOn = state.Connected
-                if ( state.Connected ) println("Connected")
+                findViewById<SignalButton>(R.id.reconnect_button).buttonOn = state.connected
+                if ( state.connected ) println("Connected")
                 else println("Disconnected")
             }
         })
-        socketHandler.connectToSocket(this);
+        _socketHandler.connectToSocket(this);
         findViewById<View>(R.id.reconnect_button).setOnClickListener{ v ->
-            socketHandler.connectToSocket(this);
+            _socketHandler.connectToSocket(this);
         }
 
         val touchDisable = findViewById<TouchToggleButton>(R.id.touch_disable_button)
@@ -95,11 +88,10 @@ class MainActivity : AppCompatActivity() {
         findViewById<ImageButton>(R.id.show_settings_button).setOnClickListener{ _ ->
             val intent = Intent(this, SettingsActivity::class.java)
             startActivity(intent)
-            true
         }
     }
 
-    fun onMultiTouch(id: Int, infos: MutableList<PointerInfo> ) {
+    private fun onMultiTouch(id: Int, infos: MutableList<PointerInfo> ) {
         val buffer =
             ByteBuffer.allocate(8 + (56 * infos.size)).order(ByteOrder.LITTLE_ENDIAN)
 
@@ -113,10 +105,10 @@ class MainActivity : AppCompatActivity() {
             buffer.put(pi.serialize())
 
         // Send the data.
-        socketHandler.send(buffer.array())
+        _socketHandler.send(buffer.array())
     }
 
-    fun onSingleTouch(id: Int, pi: PointerInfo ) {
+    private fun onSingleTouch(id: Int, pi: PointerInfo ) {
         // Send the pointer count.
         val buffer = ByteBuffer.allocate(4 + 68).order(ByteOrder.LITTLE_ENDIAN)
 
@@ -124,6 +116,6 @@ class MainActivity : AppCompatActivity() {
         buffer.putInt(1) // There is only one pointer that can hover.
         buffer.put(pi.serialize()) // This is the PointerInfo serialized.
 
-        socketHandler.send(buffer.array())
+        _socketHandler.send(buffer.array())
     }
 }

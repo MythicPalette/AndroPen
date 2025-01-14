@@ -22,15 +22,13 @@ class TouchSliderView : View {
 
     var SenderId: Int = 0
 
-    private var eventPoint: PointF? = null
+    private var _eventPoint: PointF? = null
 
     /*
      Move Sensitivity is used to control how frequently move events passed. This is
      to ensure that touch input views used like sliders
      */
     var sensitivity: Float = 0.1f
-
-    private var orientation: Orientation = Orientation.Vertical
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
         init(attrs)
@@ -89,8 +87,6 @@ class TouchSliderView : View {
         style = Paint.Style.STROKE
     }
 
-    //private val path = android.graphics.Path()
-
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
@@ -142,38 +138,31 @@ class TouchSliderView : View {
         val stamp = System.currentTimeMillis()
         val viewWidth = this.width
         val viewHeight = this.height
-        val evPoint = this.eventPoint
+        val evPoint = this._eventPoint
 
         val pi = ev.toPointerInfo(0, stamp, viewWidth, viewHeight )
 
         // Get the action type and pass it to the pointer info.
         when (action) {
-            MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN -> eventPoint = PointF(ev.x, ev.y)
-            MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> eventPoint = null
+            MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN -> _eventPoint = PointF(ev.x, ev.y)
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> _eventPoint = null
             MotionEvent.ACTION_MOVE -> {
-                if ( this.orientation == Orientation.Vertical ) {
-                    if ( evPoint == null ) return true
+                if ( evPoint == null ) return true
 
-                    // Verify we have travelled the requisite vertical distance for the sensitivity
-                    if ( abs(evPoint.y - ev.y) < (this.height * this.sensitivity) )
-                        return true // Return true to prevent sending
+                // Verify we have travelled the requisite vertical distance for the sensitivity
+                if ( abs(evPoint.y - ev.y) < (this.height * this.sensitivity) )
+                    return true // Return true to prevent sending
 
-                    /*
-                        If the sensitivity threshold has been met, we want to set the new point as
-                        the event point so the next move will be compared to this point.
-                     */
-                    pi.velocityY = if( ev.y > evPoint.y ) 1f else -1f
-                    this.eventPoint = PointF(ev.x, ev.y)
-                    this.onTouch(this.SenderId, pi)
-                }
+                /*
+                    If the sensitivity threshold has been met, we want to set the new point as
+                    the event point so the next move will be compared to this point.
+                 */
+                pi.velocityY = if( ev.y > evPoint.y ) 1f else -1f
+                this._eventPoint = PointF(ev.x, ev.y)
+                this.onTouch(this.SenderId, pi)
             }
         }
 
         return true
-    }
-
-    fun clearCanvas() {
-        //path.reset()
-        invalidate() // Redraw the view
     }
 }

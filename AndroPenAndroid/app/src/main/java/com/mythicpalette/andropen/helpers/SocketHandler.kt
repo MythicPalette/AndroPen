@@ -1,50 +1,38 @@
 package com.mythicpalette.andropen.helpers
 
 import android.content.Context
-import android.net.wifi.WifiInfo
-import android.net.wifi.WifiManager
-import com.mythicpalette.andropen.data.PointerInfo
-import com.mythicpalette.andropen.data.serialize
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
-import java.net.InetAddress
-import java.net.NetworkInterface
 import java.net.Socket
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
 
 data class ConnectionState (
-    var Connected: Boolean,
-    var Host: String,
-    var Port: Int
+    var connected: Boolean,
+    var host: String,
+    var port: Int
 )
 
 interface SocketStateListener {
     fun onConnectionStateChanged(state: ConnectionState);
 }
-class SocketHandler() {
-    private var socket: Socket? = null
-    private var inputStream: InputStream? = null
-    private var outputStream: OutputStream? = null
+class SocketHandler {
+    private var _socket: Socket? = null
+    private var _inputStream: InputStream? = null
+    private var _outputStream: OutputStream? = null
 
     // EVENT HANDLING
-    private val listeners = mutableListOf<SocketStateListener>();
-    fun addListener(listener: SocketStateListener) {
-        listeners.add(listener);
-    }
+    private val _listeners = mutableListOf<SocketStateListener>();
 
-    fun removeListener(listener: SocketStateListener) {
-        listeners.remove(listener);
+    fun addListener(listener: SocketStateListener) {
+        _listeners.add(listener);
     }
 
     private fun notifyStateChanged(state: ConnectionState) {
-        for ( listener in listeners ) {
+        for ( listener in _listeners ) {
             listener.onConnectionStateChanged(state);
         }
     }
@@ -59,10 +47,10 @@ class SocketHandler() {
                 if ( host == "0.0.0.0") return@launch
 
                 val port = Settings.Port
-                socket = Socket(host, port)
+                _socket = Socket(host, port)
 
-                inputStream = socket?.getInputStream()
-                outputStream = socket?.getOutputStream()
+                _inputStream = _socket?.getInputStream()
+                _outputStream = _socket?.getOutputStream()
 
                 monitorSocket {
                     notifyStateChanged(ConnectionState(false, host, port))
@@ -85,9 +73,9 @@ class SocketHandler() {
                 val buffer = ByteArray(1024)
                 var bytesRead: Int
 
-                while (socket?.isConnected == true) {
+                while (_socket?.isConnected == true) {
                     // Reading from the server
-                    bytesRead = inputStream?.read(buffer) ?: -1
+                    bytesRead = _inputStream?.read(buffer) ?: -1
                     if (bytesRead != -1) {
                         val response = String(buffer, 0, bytesRead)
                         println("Received from server: $response")
@@ -104,12 +92,12 @@ class SocketHandler() {
     }
 
     internal fun send(bytes: ByteArray) {
-        if ( outputStream == null ) return;
+        if ( _outputStream == null ) return;
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                outputStream?.write(bytes);
-                outputStream?.flush();
+                _outputStream?.write(bytes);
+                _outputStream?.flush();
             } catch (e: IOException) {
                 e.printStackTrace()
                 //showToast("Error sending bytes")
@@ -120,7 +108,7 @@ class SocketHandler() {
     private fun monitorSocket(onConnectionLost: () -> Unit) {
         Thread {
             while (true) {
-                if (socket?.isConnected != true) {
+                if (_socket?.isConnected != true) {
                     println("Connection lost!")
                     break
                 }

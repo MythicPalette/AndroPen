@@ -10,7 +10,7 @@ interface SettingsEventListener {
 object Settings {
     private const val PREF_NAME = "MyAppPreferences"
 
-    private val listeners = mutableListOf<SettingsEventListener>()
+    private val _listeners = mutableListOf<SettingsEventListener>()
 
     const val IP_ADDRESS = "ip_address"
     const val PORT_ADDRESS = "port_address"
@@ -42,42 +42,15 @@ object Settings {
     }
 
     fun addListener(listener: SettingsEventListener) {
-        listeners.add(listener)
-    }
-    fun removeListener(listener: SettingsEventListener) {
-        listeners.remove(listener)
+        _listeners.add(listener)
     }
     fun alertChange() {
-        for ( l in listeners )
+        for ( l in _listeners )
             l.onSettingsChanged()
     }
 
     private fun getSharedPreferences(context: Context): SharedPreferences {
         return context.getSharedPreferences(PREF_NAME, MODE_PRIVATE)
-    }
-    fun setIpAddress(context: Context, ip: String) {
-        val pref = getSharedPreferences(context)
-        val editor = pref.edit()
-        editor.putString(IP_ADDRESS, ip)
-        editor.apply()
-        IpAddress = ip
-        alertChange()
-    }
-    fun setPort(context: Context, port: Int) {
-        val pref = getSharedPreferences(context)
-        val editor = pref.edit()
-        editor.putInt(PORT_ADDRESS, port)
-        editor.apply()
-        Port = port
-        alertChange()
-    }
-    fun setPenBlocksTouch(context: Context, touch: Boolean) {
-        val pref = getSharedPreferences(context)
-        val editor = pref.edit()
-        editor.putBoolean(PEN_BLOCKS_TOUCH, touch)
-        editor.apply()
-        PenBlocksTouch = touch
-        alertChange()
     }
     fun setTouchDisabled(context: Context, touch: Boolean) {
         val pref = getSharedPreferences(context)
@@ -85,22 +58,6 @@ object Settings {
         editor.putBoolean(TOUCH_DISABLED, touch)
         editor.apply()
         TouchDisabled = touch
-        alertChange()
-    }
-    fun setSlider1Sensitivity(context: Context, sensitivity: Float) {
-        val pref = getSharedPreferences(context)
-        val editor = pref.edit()
-        editor.putFloat(SLIDER_1_SENSITIVITY, sensitivity)
-        editor.apply()
-        Slider1Sensitivity = sensitivity
-        alertChange()
-    }
-    fun setSlider2Sensitivity(context: Context, sensitivity: Float) {
-        val pref = getSharedPreferences(context)
-        val editor = pref.edit()
-        editor.putFloat(SLIDER_2_SENSITIVITY, sensitivity)
-        editor.apply()
-        Slider2Sensitivity = sensitivity
         alertChange()
     }
     fun set(

@@ -4,11 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.drawable.Drawable
-import android.text.TextPaint
 import android.util.AttributeSet
-import android.view.View
-import com.mythicpalette.andropen.R
 
 class TouchToggleButton : ToggleButton {
 
@@ -31,7 +27,7 @@ class TouchToggleButton : ToggleButton {
         val centerY = height / 2f
         val baseRadius = width / 5f // Proportional scaling for the inner circle
 
-        val paint = if( this.buttonOn ) whitePaint else grayPaint
+        val paint = if( this.buttonOn ) _whitePaint else _grayPaint
         arcPaint.color = paint.color
 
         // Draw the main circle
