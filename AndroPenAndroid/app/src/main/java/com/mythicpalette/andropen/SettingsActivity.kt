@@ -12,6 +12,8 @@ import androidx.core.view.WindowInsetsCompat
 import com.mythicpalette.andropen.helpers.Settings
 
 class SettingsActivity : AppCompatActivity() {
+    private val SLIDER_MULTIPLIER = 1000f
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -27,10 +29,10 @@ class SettingsActivity : AppCompatActivity() {
         findViewById<SwitchCompat>(R.id.touch_switch).isChecked = Settings.PenBlocksTouch
 
         val s1 = findViewById<SeekBar>(R.id.sensitivity1)
-        val s1Sense = (s1.max - ((Settings.Slider1Sensitivity * 100) - s1.min))
+        val s1Sense = (s1.max - ((Settings.Slider1Sensitivity * SLIDER_MULTIPLIER) - s1.min))
 
         val s2 = findViewById<SeekBar>(R.id.sensitivity2)
-        val s2Sense = (s2.max - ((Settings.Slider2Sensitivity * 100) - s2.min))
+        val s2Sense = (s2.max - ((Settings.Slider2Sensitivity * SLIDER_MULTIPLIER) - s2.min))
         s1.progress = s1Sense.toInt()
         s2.progress = s2Sense.toInt()
 
@@ -49,10 +51,10 @@ class SettingsActivity : AppCompatActivity() {
         val penTouch = findViewById<SwitchCompat>(R.id.touch_switch).isChecked
 
         val s1 = findViewById<SeekBar>(R.id.sensitivity1)
-        val s1Sense = (s1.max - s1.progress + s1.min) / 100f
+        val s1Sense = (s1.max - s1.progress + s1.min) / SLIDER_MULTIPLIER
 
         val s2 = findViewById<SeekBar>(R.id.sensitivity2)
-        val s2Sense = (s2.max - s2.progress + s2.min) / 100f
+        val s2Sense = (s2.max - s2.progress + s2.min) / SLIDER_MULTIPLIER
 
         Settings.set(
             this,

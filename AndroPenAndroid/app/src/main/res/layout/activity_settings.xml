@@ -78,15 +78,14 @@
                 android:text="@string/slider_1_sensitivity"
                 android:textColor="@color/text"
                 />
+
             <SeekBar
                 android:id="@+id/sensitivity1"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:layout_gravity="fill"
-                android:min="1"
-                android:max="25"
-                />
-
+                android:min="5"
+                android:max="100"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -101,8 +100,7 @@
                 android:layout_height="40dp"
                 android:layout_gravity="fill"
                 android:min="5"
-                android:max="50"
-                />
+                android:max="100"/>
 
             <Space
                 android:layout_height="0dp"
