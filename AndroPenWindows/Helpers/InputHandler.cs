@@ -13,6 +13,9 @@ public class InputHandler
 
     private long _lastStamp = 0;
 
+    // 
+    private PointerTracker _tracker = [];
+
     // Constructor to initialize touch injection
     public InputHandler()
     {
@@ -26,6 +29,15 @@ public class InputHandler
         PointerTypeInfo[] outData = new PointerTypeInfo[ rpis.Length ];
         for( int i = 0; i < rpis.Length; i++ )// (RemotePointerInfo rp in rpis)
         {
+            // Check the pointer type. If it's up, remove it from the list
+            if( rpis[i].EvType is AndroidEventType.Up or AndroidEventType.PointerUp )
+                this._tracker.Remove( rpis[i].PointerId );
+
+            // Otherwise, update the tracker data.
+            else
+                this._tracker.InsertOrUpdate( rpis[i] );
+                
+
             PointerFlags pointerFlags = AssembleFlags(rpis[i]);
 
             Point point = rpis[i].Translate( ScreenUtils.GetNamedBounds( Settings.ScreenDevice ));
@@ -67,6 +79,9 @@ public class InputHandler
     // Simulate a pen input with pressure and tilt
     public void SimulatePen( RemotePointerInfo rpi )
     {
+        // Remove all touch pointers
+        PurgeTracker();
+
         // Prepare the flags
         PointerFlags pFlags = AssembleFlags(rpi);
 
@@ -240,5 +255,22 @@ public class InputHandler
             //throw new Exception( "Failed to send input." );
             Logging.Error( $"Failed to send input. Err: ${Marshal.GetHRForLastWin32Error()}" );
         }
+    }
+
+    private void PurgeTracker()
+    {
+        List<RemotePointerInfo> pointers = [];
+        while( this._tracker.Count > 0 )
+        {
+            RemotePointerInfo? rpi = this._tracker.Consume();
+            if ( rpi != null )
+            {
+                // Set the pointer type to up.
+                rpi.EvType = rpi.PointerId > 0 ? AndroidEventType.PointerDown : AndroidEventType.Up;
+                pointers.Add( rpi );
+            }
+        }
+
+        SimulateTouch( [.. pointers] );
     }
 }
